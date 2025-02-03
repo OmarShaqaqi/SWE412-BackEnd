@@ -1,7 +1,5 @@
 package com.backend.senior_backend.service;
 
+public class CategoriesService {
 
-//Logic Layer
-public class GroupService {
-    
 }
