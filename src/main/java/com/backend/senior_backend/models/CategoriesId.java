@@ -9,7 +9,8 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoryId implements Serializable {
+@EqualsAndHashCode
+public class CategoriesId implements Serializable {
     private Long groupId;
     private String name;
 }

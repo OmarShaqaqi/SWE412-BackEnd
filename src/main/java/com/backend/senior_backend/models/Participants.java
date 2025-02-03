@@ -22,4 +22,7 @@ public class Participants {
     @MapsId("userPhone")
     @JoinColumn(name = "user_phone", nullable = false)
     private Users user;
+
+    @Column(nullable = false, insertable = false)
+    private boolean isLeader;
 }

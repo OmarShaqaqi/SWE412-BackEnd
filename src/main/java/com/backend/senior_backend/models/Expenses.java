@@ -10,7 +10,7 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Expense {
+public class Expenses {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,5 +32,5 @@ public class Expense {
         @JoinColumn(name = "group_id", referencedColumnName = "group_id"),
         @JoinColumn(name = "category_name", referencedColumnName = "name")
     })
-    private Category category;
+    private Categories category;
 }

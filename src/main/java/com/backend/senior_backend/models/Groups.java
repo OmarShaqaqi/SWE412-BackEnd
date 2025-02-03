@@ -3,7 +3,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "Groups")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,7 +19,4 @@ public class Groups {
     @Column(nullable = false)
     private int budget;
 
-    @ManyToOne
-    @JoinColumn(name = "leader_phone", nullable = false)
-    private Users leader;
 }

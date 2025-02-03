@@ -9,6 +9,7 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public class ParticipantsId implements Serializable {
     private Long groupId;
     private String userPhone;
