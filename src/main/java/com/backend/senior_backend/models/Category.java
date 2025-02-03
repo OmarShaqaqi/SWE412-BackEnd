@@ -1,7 +1,6 @@
 package com.backend.senior_backend.models;
 import jakarta.persistence.*;
 import lombok.*;
-
 @Entity
 @Table(name = "Category")
 @Getter
@@ -12,7 +11,7 @@ import lombok.*;
 public class Category {
 
     @EmbeddedId
-    private CategoryId id;
+    private CategoriesId id;
 
     @ManyToOne
     @MapsId("groupId")  // Reference to group_id in CategoryId
@@ -20,12 +19,12 @@ public class Category {
     private Groups group;
 
     // Manually add getters and setters for ID
-    // @Data adds getters and setters for all fields
-    public CategoryId getId() {
+    // @Data add 
+    public CategoriesId getId() {
         return id;
     }
 
-    public void setId(CategoryId id) {
+    public void setId(CategoriesId id) {
         this.id = id;
     }
 }

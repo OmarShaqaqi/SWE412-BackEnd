@@ -12,7 +12,6 @@ import lombok.*;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Users {
     
     @Id
@@ -44,11 +43,6 @@ public class Users {
     @Column(length = 15, nullable = false)
     private String lname;
 
-    @Column(length = 25, nullable = false)
-    private String email;
-
-    @Column(nullable = false)
-    private String password;
 
     private String resetPin; // 6-digit PIN for password reset
     private LocalDateTime pinExpiration; // Expiration time for the PIN
