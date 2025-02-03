@@ -110,6 +110,7 @@ public class AuthService {
                 request.getFname(),
                 request.getLname(),
                 request.getEmail(),
+                request.getUsername(),
                 hashedPassword
         );
     
