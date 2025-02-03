@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 // API Layer
 @RestController
-public class GroupController {
+public class GroupsController {
 
     @GetMapping("/group")
     public String postMethodName() {
