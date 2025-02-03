@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 // @Entity
-// @Table(name = "Users")
+// @Table(name = "users")
 // @Getter
 // @Setter
 // @NoArgsConstructor
@@ -26,7 +26,7 @@ import lombok.*;
 //     message = "{invalid.email}")
 //     private String email;
 
-//     @Column(length = 50, nullable = false)
+//     @Column(length = 100, nullable = false)
 //     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
 //     message = "{invalid.password}")
 //     private String password;
@@ -57,6 +57,7 @@ import lombok.*;
 //         this.username = username;
 //     }
 // }
+
 @Entity
 @Table(name = "users")  // Ensure lowercase table name
 @Getter
@@ -70,6 +71,13 @@ public class Users {
 
     @Column(length = 100, nullable = false, unique = true)  // Allow longer emails
     private String email;
+    //     @Column(length = 50, nullable = false, unique = true)
+//     @Pattern(regexp = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\."
+//     + "[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@"
+//     + "(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9]"
+//     + "(?:[a-z0-9-]*[a-z0-9])?",
+//     message = "{invalid.email}")
+//     private String email;
 
     @Column(length = 255, nullable = false)  // Increase password field to handle hash
     private String password;

@@ -102,6 +102,15 @@ public class AuthService {
             response.put("error","Weak password! Must be at least 8 characters with uppercase, lowercase, number, and special character.");
             return response;
         }
+        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
+            response.put("error", "Username already exists!");
+            return response;
+        }
+
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            response.put("error", "Email already exists!");
+            return response;
+        }
     
         String hashedPassword = passwordEncoder.encode(request.getPassword());
     
