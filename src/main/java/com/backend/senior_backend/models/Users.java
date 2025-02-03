@@ -2,6 +2,8 @@ package com.backend.senior_backend.models;
 
 import jakarta.validation.constraints.Pattern;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -41,4 +43,22 @@ public class Users {
 
     @Column(length = 15, nullable = false)
     private String lname;
+
+    @Column(length = 25, nullable = false)
+    private String email;
+
+    @Column(nullable = false)
+    private String password;
+
+    private String resetPin; // 6-digit PIN for password reset
+    private LocalDateTime pinExpiration; // Expiration time for the PIN
+
+
+    public Users(String phone, String fname, String lname, String email, String password) {
+        this.phone = phone;
+        this.fname = fname;
+        this.lname = lname;
+        this.email = email;
+        this.password = password;
+    }
 }
