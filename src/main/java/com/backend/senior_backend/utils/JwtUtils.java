@@ -2,9 +2,13 @@ package com.backend.senior_backend.utils;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+
 import org.springframework.stereotype.Component;
+
 import java.security.Key;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Function;
 
 @Component
@@ -12,6 +16,7 @@ public class JwtUtils {
 
     private static final String SECRET_KEY = "your-secret-key-should-be-very-long-and-random"; // Replace with a secure key
     private static final long EXPIRATION_TIME = 86400000; // 24 hours
+    private Set<String> invalidatedTokens = new HashSet<>();
 
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
@@ -34,6 +39,9 @@ public class JwtUtils {
         return extractClaim(token, Claims::getExpiration);
     }
 
+    public String extractUsername(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
@@ -54,5 +62,13 @@ public class JwtUtils {
 
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
+    }
+
+    public void invalidateToken(String token) {
+        invalidatedTokens.add(token);
+    }
+
+    public boolean isTokenInvalidated(String token) {
+        return invalidatedTokens.contains(token);
     }
 }
