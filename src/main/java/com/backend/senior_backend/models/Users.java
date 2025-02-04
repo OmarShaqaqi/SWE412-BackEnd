@@ -1,8 +1,8 @@
 package com.backend.senior_backend.models;
 
-import jakarta.validation.constraints.Pattern;
-
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+
 import lombok.*;
 
 @Entity
@@ -15,30 +15,35 @@ public class Users {
     
     @Id
     @Column(length = 15, nullable = false, unique = true)
+    @NotBlank(message = "{invalid.phone}") 
     private String phone;
 
     @Column(length = 50, nullable = false, unique = true)
-    @Pattern(regexp = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\."
-    + "[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@"
-    + "(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9]"
-    + "(?:[a-z0-9-]*[a-z0-9])?",
-    message = "{invalid.email}")
+    @NotBlank(message = "{invalid.email}")
+    @Email(message = "{invalid.email}")
     private String email;
 
     @Column(length = 50, nullable = false)
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
-    message = "{invalid.password}")
+    @NotBlank(message = "{invalid.password}")
+    @Pattern(
+        regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
+        message = "{invalid.password}"
+    )
     private String password;
 
-    @Column(length = 50, nullable = false,unique = true)
-    @Pattern(regexp = "^[_a-zA-Z]{3,16}$",
-    message = "{invalid.username}")
+    @Column(length = 50, nullable = false, unique = true)
+    @NotBlank(message = "{invalid.username}")
+    @Pattern(
+        regexp = "^[_a-zA-Z]{3,16}$",
+        message = "{invalid.username}"
+    )
     private String username;
 
-
     @Column(length = 15, nullable = false)
+    @NotBlank(message = "{invalid.fname}")
     private String fname;
 
     @Column(length = 15, nullable = false)
+    @NotBlank(message = "{invalid.lname}")
     private String lname;
 }
