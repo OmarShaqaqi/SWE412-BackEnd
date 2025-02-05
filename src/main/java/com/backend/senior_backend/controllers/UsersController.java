@@ -19,7 +19,7 @@ import com.backend.senior_backend.dto.LoginRequestDTO;
 import com.backend.senior_backend.models.Users;
 import com.backend.senior_backend.repositories.UsersRepository;
 
-@CrossOrigin(origins = "http://localhost:52239")
+@CrossOrigin(origins = "http://localhost:57042")
 @RestController
 public class UsersController {
 
