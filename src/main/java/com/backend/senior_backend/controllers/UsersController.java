@@ -15,12 +15,9 @@ import com.backend.senior_backend.service.UsersService;
 
 import jakarta.validation.Valid;
 
+import com.backend.senior_backend.dto.LoginRequestDTO;
 import com.backend.senior_backend.models.Users;
 import com.backend.senior_backend.repositories.UsersRepository;
-
-
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @CrossOrigin(origins = "http://localhost:52239")
 @RestController
@@ -41,7 +38,16 @@ public class UsersController {
         
     }
 
-    
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequestDTO request) {
+        Map<String, String> response = usersService.loginUser(request);
+
+        if (response.containsKey("error")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+
+        return ResponseEntity.ok(response);
+    }
 
     @GetMapping("/getinfo")
     public ResponseEntity<?> getProfile() {

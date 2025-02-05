@@ -8,15 +8,18 @@ import com.backend.senior_backend.models.Users;
 import com.backend.senior_backend.repositories.UsersRepository;
 
 import lombok.RequiredArgsConstructor;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import static java.util.regex.Pattern.matches;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.backend.senior_backend.data.UserRepository;
+import com.backend.senior_backend.dto.LoginRequestDTO;
 import com.backend.senior_backend.utils.JwtUtils;
 
 @Service
@@ -60,6 +63,34 @@ public class UsersService {
 
         return ResponseEntity.ok(Map.of("status", 200));
     }
+
+    
+
+
+
+        public Map<String, String> loginUser(LoginRequestDTO request) {
+        Map<String, String> response = new HashMap<>();
+        Map<String, Object> errors = new HashMap<>();
+        Optional<Users> userOptional = usersRepository.findByPhone(request.getPhone());
+
+        if (userOptional.isEmpty()) {
+            response.put("error", "User not found!");
+            return response;
+        }
+
+        Users user = userOptional.get();
+
+        if (!matches(request.getPassword(), user.getPassword())) {
+            response.put("error", "Invalid password!");
+            return response;
+        }
+
+        // Generate JWT token
+        String token = jwtUtils.generateToken(user.getPhone());
+        response.put("token", token);
+        return response;
+    }
+
     public ResponseEntity<?> getProfile(String phone) {
         System.out.println("✅ Authenticated user phone: " + phone);
 
@@ -113,10 +144,10 @@ public class UsersService {
 
         Users userDetails = user.get();
         String newPassword = passwordMap.get("newPassword");
-        userDetails.setPassword(passwordEncoder.encode(newPassword));
+        userDetails.setPassword(newPassword);
         usersRepository.save(userDetails);
 
-        return ResponseEntity.ok("✅ Password changed successfully!");
+        return ResponseEntity.ok("✅ Password changed successfully!: "+newPassword);
     }
 
     public String signOut(String token) {
