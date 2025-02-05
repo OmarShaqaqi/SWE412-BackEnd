@@ -6,17 +6,18 @@ import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
 import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import java.util.Map;
 
-import com.backend.senior_backend.models.Users;
-import com.backend.senior_backend.repositories.UsersRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 import com.backend.senior_backend.service.UsersService;
 
 import jakarta.validation.Valid;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
+import com.backend.senior_backend.models.Users;
+import com.backend.senior_backend.repositories.UsersRepository;
+
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,16 +41,33 @@ public class UsersController {
         
     }
 
-    // @PostMapping("/email")
-    // public Users postMethodName(@RequestBody Users entity) {
+    
 
-    //    final Optional<Users> user =  usersRepository.findByEmail(entity.getEmail());
-    //    System.out.println(user.getPassword());
-        
-        
-    //     return user;
-    // }
-    
-    
-    
+    @GetMapping("/getinfo")
+    public ResponseEntity<?> getProfile() {
+        String phone = SecurityContextHolder.getContext().getAuthentication().getName();
+        return usersService.getProfile(phone);
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteUser() {
+        String phone = SecurityContextHolder.getContext().getAuthentication().getName();
+        return usersService.deleteUser(phone);
+    }
+
+    @PutMapping("/changepassword")
+    public ResponseEntity<?> changePassword(@RequestBody Map<String, String> passwordMap) {
+        String phone = SecurityContextHolder.getContext().getAuthentication().getName();
+        return usersService.changePassword(phone, passwordMap);
+    }
+
+    @PostMapping("/signout")
+    public ResponseEntity<?> signOut(@RequestHeader("Authorization") String token) {
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        String response = usersService.signOut(token);
+
+        return ResponseEntity.ok(response);
+    }
 }

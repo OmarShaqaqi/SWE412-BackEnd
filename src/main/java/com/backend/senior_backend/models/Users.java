@@ -6,11 +6,11 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 
 @Entity
-@Table(name = "Users")
+@Table(name = "users")
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
+@Data
 public class Users {
     
     @Id
@@ -18,32 +18,27 @@ public class Users {
     @NotBlank(message = "{invalid.phone}") 
     private String phone;
 
-    @Column(length = 50, nullable = false, unique = true)
-    @NotBlank(message = "{invalid.email}")
-    @Email(message = "{invalid.email}")
+    @Column(length = 100, nullable = false, unique = true)
     private String email;
 
-    @Column(length = 50, nullable = false)
-    @NotBlank(message = "{invalid.password}")
-    @Pattern(
-        regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
-        message = "{invalid.password}"
-    )
+    @Column(length = 255, nullable = false)  // Increase password field to handle hash
     private String password;
 
     @Column(length = 50, nullable = false, unique = true)
-    @NotBlank(message = "{invalid.username}")
-    @Pattern(
-        regexp = "^[_a-zA-Z]{3,16}$",
-        message = "{invalid.username}"
-    )
     private String username;
 
-    @Column(length = 15, nullable = false)
-    @NotBlank(message = "{invalid.fname}")
+    @Column(length = 30, nullable = false)
     private String fname;
 
-    @Column(length = 15, nullable = false)
-    @NotBlank(message = "{invalid.lname}")
+    @Column(length = 30, nullable = false)
     private String lname;
+
+    public Users(String phone, String fname, String lname, String email, String username, String password) {
+        this.phone = phone;
+        this.fname = fname;
+        this.lname = lname;
+        this.email = email;
+        this.username = username;
+        this.password = password;
+    }
 }
