@@ -55,10 +55,17 @@ public class UsersController {
         return usersService.getProfile(phone);
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteUser() {
+    @PostMapping("/deleteuser")
+    public ResponseEntity<?> deleteUser(@RequestBody Map<String, String> requestMap) {
         String phone = SecurityContextHolder.getContext().getAuthentication().getName();
-        return usersService.deleteUser(phone);
+        String password = requestMap.get("password");
+        return usersService.deleteUser(phone, password);
+    }
+
+    @PutMapping("/updateuser")
+    public ResponseEntity<?> updateUserDetails(@RequestBody Map<String, String> userDetailsMap) {
+        String phone = SecurityContextHolder.getContext().getAuthentication().getName();
+        return usersService.updateUserDetails(phone, userDetailsMap);
     }
 
     @PutMapping("/changepassword")

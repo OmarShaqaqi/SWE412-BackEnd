@@ -114,7 +114,7 @@ public class UsersService {
         return ResponseEntity.ok(response);
     }
 
-    public ResponseEntity<?> deleteUser(String phone) {
+    public ResponseEntity<?> deleteUser(String phone,String password) {
         System.out.println("✅ Authenticated user phone: " + phone);
 
         if (phone == null || phone.equals("anonymousUser")) {
@@ -124,6 +124,11 @@ public class UsersService {
         Optional<Users> user = usersRepository.findById(phone);
         if (user.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("❌ User not found!");
+        }
+
+        Users userDetails = user.get();
+        if (!userDetails.getPassword().equals(password)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("❌ Wrong password!");
         }
 
         usersRepository.delete(user.get());
@@ -148,6 +153,30 @@ public class UsersService {
         usersRepository.save(userDetails);
 
         return ResponseEntity.ok("✅ Password changed successfully!: "+newPassword);
+    }
+
+    public ResponseEntity<?> updateUserDetails(String phone, Map<String, String> userDetailsMap) {
+        System.out.println("✅ Authenticated user phone: " + phone);
+    
+        if (phone == null || phone.equals("anonymousUser")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("❌ Unauthorized access!");
+        }
+    
+        Optional<Users> user = usersRepository.findById(phone);
+        if (user.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("❌ User not found!");
+        }
+    
+        Users userDetails = user.get();
+        if (userDetailsMap.containsKey("username")) {
+            userDetails.setUsername(userDetailsMap.get("username"));
+        }
+        if (userDetailsMap.containsKey("email")) {
+            userDetails.setEmail(userDetailsMap.get("email"));
+        }
+    
+        usersRepository.save(userDetails);
+        return ResponseEntity.ok("✅ User details updated successfully!");
     }
 
     public String signOut(String token) {
