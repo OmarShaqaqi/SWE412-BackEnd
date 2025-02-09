@@ -1,9 +1,6 @@
 package com.backend.senior_backend.repositories;
 
-import java.util.Locale.Category;
-
 import org.springframework.data.jpa.repository.JpaRepository;
-
 import com.backend.senior_backend.models.Categories;
 import com.backend.senior_backend.models.CategoriesId;
 

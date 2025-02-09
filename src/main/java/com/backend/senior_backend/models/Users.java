@@ -3,6 +3,11 @@ package com.backend.senior_backend.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
+import java.util.Collection;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import lombok.*;
 
 @Entity
@@ -11,7 +16,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @Data
-public class Users {
+public class Users implements UserDetails {
     
     @Id
     @Column(length = 15, nullable = false, unique = true)
@@ -21,7 +26,7 @@ public class Users {
     @Column(length = 100, nullable = false, unique = true)
     private String email;
 
-    @Column(length = 255, nullable = false)  // Increase password field to handle hash
+    @Column(length = 255, nullable = false)  // Increase password field to handle hash, we need to make strong pass later
     private String password;
 
     @Column(length = 50, nullable = false, unique = true)
@@ -41,4 +46,10 @@ public class Users {
         this.username = username;
         this.password = password;
     }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
+
 }
