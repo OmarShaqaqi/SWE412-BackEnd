@@ -53,14 +53,15 @@ public class UsersController {
     @GetMapping("/getinfo")
     public ResponseEntity<?> getProfile() {
         String phone = SecurityContextHolder.getContext().getAuthentication().getName();
+
         return usersService.getProfile(phone);
     }
 
-    // @DeleteMapping("/delete")
-    // public ResponseEntity<?> deleteUser() {
-    //     String phone = SecurityContextHolder.getContext().getAuthentication().getName();
-    //     return usersService.deleteUser(phone);
-    // }
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteUser() {
+        String phone = SecurityContextHolder.getContext().getAuthentication().getName();
+        return usersService.deleteUser(phone);
+    }
 
     // @PutMapping("/changepassword")
     // public ResponseEntity<?> changePassword(@RequestBody Map<String, String> passwordMap) {
@@ -68,13 +69,13 @@ public class UsersController {
     //     return usersService.changePassword(phone, passwordMap);
     // }
 
-    // @PostMapping("/signout")
-    // public ResponseEntity<?> signOut(@RequestHeader("Authorization") String token) {
-    //     if (token.startsWith("Bearer ")) {
-    //         token = token.substring(7);
-    //     }
-    //     String response = usersService.signOut(token);
+    @PostMapping("/signout")
+    public ResponseEntity<?> signOut(@RequestHeader("Authorization") String token) {
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        String response = usersService.signOut(token);
 
-    //     return ResponseEntity.ok(response);
-    // }
+        return ResponseEntity.ok(response);
+    }
 }

@@ -76,11 +76,7 @@ public class UsersService {
         return ResponseEntity.ok(Map.of("status", 200));
     }
 
-    
-
-
-
-        public Map<String, String> loginUser(LoginRequestDTO request) {
+    public Map<String, String> loginUser(LoginRequestDTO request) {
         Map<String, String> response = new HashMap<>();
         Map<String, Object> errors = new HashMap<>();
         Optional<Users> userOptional = usersRepository.findByPhone(request.getPhone());
@@ -101,10 +97,7 @@ public class UsersService {
         String token = jwtService.generateToken(user.getPhone());
         response.put("token", token);
         return response;
-        // // Generate JWT token
-        // String token = jwtUtils.generateToken(user.getPhone());
-        // response.put("token", token);
-        // return response;
+       
     }
 
     public ResponseEntity<?> getProfile(String phone) {
@@ -167,7 +160,7 @@ public class UsersService {
     }
 
     public String signOut(String token) {
-        jwtUtils.invalidateToken(token);
+        jwtService.invalidateToken(token);
         return "✅ User signed out successfully!";
     }
 } 

@@ -3,7 +3,9 @@ package com.backend.senior_backend.service;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 
@@ -22,9 +24,11 @@ public class JWTService {
 
     // ✅ Use a fixed secret key (must be at least 32 bytes long)
     private static final String SECRET_KEY = "3cfa76ef14937c1c0ea519f8fc057a80fcd04a7420f8e8bcd0a7567c272e007b";
+    private Set<String> invalidatedTokens = new HashSet<>();
 
     public String generateToken(String phone) {
         Map<String,Object> claims = new HashMap<>();
+        
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -77,5 +81,13 @@ public class JWTService {
 
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
+    }
+
+    public void invalidateToken(String token) {
+        invalidatedTokens.add(token);
+    }
+
+    public boolean isTokenInvalidated(String token) {
+        return invalidatedTokens.contains(token);
     }
 }
