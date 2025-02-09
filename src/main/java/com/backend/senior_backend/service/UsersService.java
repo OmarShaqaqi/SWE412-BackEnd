@@ -1,6 +1,8 @@
 package com.backend.senior_backend.service;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
@@ -16,7 +18,7 @@ import static java.util.regex.Pattern.matches;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.password.PasswordEncoder;
+// import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.backend.senior_backend.data.UserRepository;
 import com.backend.senior_backend.dto.LoginRequestDTO;
@@ -27,11 +29,20 @@ import com.backend.senior_backend.utils.JwtUtils;
 public class UsersService {
 
     private final UsersRepository usersRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    // @Autowired
+    // private PasswordEncoder passwordEncoder;
 
     @Autowired
     private JwtUtils jwtUtils;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JWTService jwtService;
+
+    
+    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
 
 
     public ResponseEntity<?> newUser(Users user, BindingResult bindingResult) {
@@ -59,6 +70,7 @@ public class UsersService {
             return ResponseEntity.badRequest().body(errors);
         }
 
+        user.setPassword(encoder.encode(user.getPassword()));
         usersRepository.save(user); //save user
 
         return ResponseEntity.ok(Map.of("status", 200));
@@ -72,6 +84,7 @@ public class UsersService {
         Map<String, String> response = new HashMap<>();
         Map<String, Object> errors = new HashMap<>();
         Optional<Users> userOptional = usersRepository.findByPhone(request.getPhone());
+        System.out.println(request.getPhone());
 
         if (userOptional.isEmpty()) {
             response.put("error", "User not found!");
@@ -80,15 +93,18 @@ public class UsersService {
 
         Users user = userOptional.get();
 
-        if (!matches(request.getPassword(), user.getPassword())) {
+        if (!encoder.matches(request.getPassword(), user.getPassword())) {
             response.put("error", "Invalid password!");
             return response;
         }
-
-        // Generate JWT token
-        String token = jwtUtils.generateToken(user.getPhone());
+        
+        String token = jwtService.generateToken(user.getPhone());
         response.put("token", token);
         return response;
+        // // Generate JWT token
+        // String token = jwtUtils.generateToken(user.getPhone());
+        // response.put("token", token);
+        // return response;
     }
 
     public ResponseEntity<?> getProfile(String phone) {
