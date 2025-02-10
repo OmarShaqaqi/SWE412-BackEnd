@@ -71,7 +71,6 @@ public class UsersService {
         }
 
         Users user = userOptional.get();
-
         if (!encoder.matches(request.getPassword(), user.getPassword())) {
             response.put("error", "Invalid password!");
             return response;
@@ -118,7 +117,7 @@ public class UsersService {
         }
 
         Users userDetails = user.get();
-        if (!userDetails.getPassword().equals(password)) {
+        if (!encoder.encode(userDetails.getPassword()).equals(password)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("❌ Wrong password!");
         }
 
