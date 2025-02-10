@@ -12,10 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @RestController
 public class SeniorBackendApplication {
 
-	@GetMapping(path = "/hello")
-	public String getMethodName() {
-		return "Hello, world";
-	}
+	
 	
 	public static void main(String[] args) {
 		SpringApplication.run(SeniorBackendApplication.class, args);
