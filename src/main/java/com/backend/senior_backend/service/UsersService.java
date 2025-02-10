@@ -12,15 +12,25 @@ import lombok.RequiredArgsConstructor;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
+import java.util.Timer;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+
 import static java.util.regex.Pattern.matches;
+
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.backend.senior_backend.Entity.EmailDetails;
 import com.backend.senior_backend.data.UserRepository;
 import com.backend.senior_backend.dto.LoginRequestDTO;
 import com.backend.senior_backend.utils.JwtUtils;
+
+import java.util.TimerTask;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +42,12 @@ public class UsersService {
 
     @Autowired
     private JwtUtils jwtUtils;
+
+    // In-memory store for reset PINs
+    private final Map<String, String> resetPins = new ConcurrentHashMap<>();
+
+    @Autowired
+    private EmailService emailService;
 
 
     public ResponseEntity<?> newUser(Users user, BindingResult bindingResult) {
@@ -63,10 +79,6 @@ public class UsersService {
 
         return ResponseEntity.ok(Map.of("status", 200));
     }
-
-    
-
-
 
         public Map<String, String> loginUser(LoginRequestDTO request) {
         Map<String, String> response = new HashMap<>();
@@ -177,6 +189,68 @@ public class UsersService {
     
         usersRepository.save(userDetails);
         return ResponseEntity.ok("✅ User details updated successfully!");
+    }
+    
+
+    // //Email ---------------------
+    public ResponseEntity<?> resetRequest(String email) {
+        Optional<Users> userOptional = usersRepository.findByEmail(email);
+
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("❌ User with this email not found!");
+        }
+
+        // Generate a reset PIN
+        String resetPin = generateResetPin();
+        Users user = userOptional.get();
+        String phone = user.getPhone();  // Get user phone to store the PIN
+        
+        // Store PIN in HashMap with expiration logic
+        resetPins.put(phone, resetPin);
+        expireResetPin(phone, 10);  // Set expiration time for 10 minutes
+
+        // Send PIN via email
+        EmailDetails details = new EmailDetails();
+        details.setRecipient(user.getEmail());
+        details.setSubject("Password Reset Request");
+        details.setMsgBody("Your reset PIN is: " + resetPin);
+        
+        emailService.sendSimpleMail(details);
+
+        return ResponseEntity.ok("✅ Reset PIN sent to your email.");
+    }
+
+    // Generate a random 6-digit PIN
+    private String generateResetPin() {
+        Random random = new Random();
+        return String.format("%06d", random.nextInt(1000000));  // Ensures a 6-digit format
+    }
+
+    // Expire PIN after a set time (10 minutes)
+    private void expireResetPin(String phone, int minutes) {
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                resetPins.remove(phone);
+            }
+        }, TimeUnit.MINUTES.toMillis(minutes));
+    }
+
+    public ResponseEntity<?> validateResetPin(String phone, String pin) {
+        String storedPin = resetPins.get(phone);
+
+        if (storedPin == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("❌ No PIN found or it has expired!");
+        }
+
+        if (!storedPin.equals(pin)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("❌ Invalid PIN!");
+        }
+
+        // Clear the PIN after successful validation
+        resetPins.remove(phone);
+
+        return ResponseEntity.ok("✅ PIN validated successfully!");
     }
 
     public String signOut(String token) {

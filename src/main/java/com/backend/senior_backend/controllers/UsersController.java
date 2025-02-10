@@ -11,10 +11,12 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.backend.senior_backend.service.EmailService;
 import com.backend.senior_backend.service.UsersService;
 
 import jakarta.validation.Valid;
 
+import com.backend.senior_backend.Entity.EmailDetails;
 import com.backend.senior_backend.dto.LoginRequestDTO;
 import com.backend.senior_backend.models.Users;
 import com.backend.senior_backend.repositories.UsersRepository;
@@ -72,6 +74,29 @@ public class UsersController {
     public ResponseEntity<?> changePassword(@RequestBody Map<String, String> passwordMap) {
         String phone = SecurityContextHolder.getContext().getAuthentication().getName();
         return usersService.changePassword(phone, passwordMap);
+    }
+
+    @PostMapping("/resetRequest")
+    public ResponseEntity<?> resetRequest(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+
+        if (email == null || email.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("❌ Email is required!");
+        }
+
+        return usersService.resetRequest(email);
+    }
+
+    @PostMapping("/validatePin")
+    public ResponseEntity<?> validateResetPin(@RequestBody Map<String, String> request) {
+        String phone = request.get("phone");
+        String pin = request.get("pin");
+
+        if (phone == null || pin == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("❌ Phone and PIN are required!");
+        }
+
+        return usersService.validateResetPin(phone, pin);
     }
 
     @PostMapping("/signout")
