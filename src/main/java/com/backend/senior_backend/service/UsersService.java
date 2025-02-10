@@ -139,7 +139,7 @@ public class UsersService {
 
         Users userDetails = user.get();
         String newPassword = passwordMap.get("newPassword");
-        userDetails.setPassword(newPassword);
+        userDetails.setPassword(encoder.encode(newPassword));
         usersRepository.save(userDetails);
 
         return ResponseEntity.ok("✅ Password changed successfully!: "+newPassword);
@@ -160,9 +160,9 @@ public class UsersService {
         if (userDetailsMap.containsKey("username")) {
             userDetails.setUsername(userDetailsMap.get("username"));
         }
-        if (userDetailsMap.containsKey("email")) {
-            userDetails.setEmail(userDetailsMap.get("email"));
-        }
+        // if (userDetailsMap.containsKey("email")) {
+        //     userDetails.setEmail(userDetailsMap.get("email"));
+        // }
     
         usersRepository.save(userDetails);
         return ResponseEntity.ok("✅ User details updated successfully!");

@@ -60,11 +60,11 @@ public class UsersController {
         return usersService.updateUserDetails(phone, userDetailsMap);
     }
 
-    // @PutMapping("/changepassword")
-    // public ResponseEntity<?> changePassword(@RequestBody Map<String, String> passwordMap) {
-    //     String phone = SecurityContextHolder.getContext().getAuthentication().getName();
-    //     return usersService.changePassword(phone, passwordMap);
-    // }
+    @PutMapping("/changepassword")
+    public ResponseEntity<?> changePassword(@RequestBody Map<String, String> passwordMap) {
+        String phone = SecurityContextHolder.getContext().getAuthentication().getName();
+        return usersService.changePassword(phone, passwordMap);
+    }
 
     @PostMapping("/signout")
     public ResponseEntity<?> signOut(@RequestHeader("Authorization") String token) {
