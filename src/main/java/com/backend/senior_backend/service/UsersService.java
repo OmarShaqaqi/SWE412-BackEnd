@@ -117,7 +117,7 @@ public class UsersService {
         }
 
         Users userDetails = user.get();
-        if (!encoder.encode(userDetails.getPassword()).equals(password)) {
+        if (!encoder.encode(password).equals(userDetails.getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("❌ Wrong password!");
         }
 
