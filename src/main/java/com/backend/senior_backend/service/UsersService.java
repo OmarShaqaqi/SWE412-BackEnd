@@ -105,25 +105,26 @@ public class UsersService {
         return ResponseEntity.ok(response);
     }
 
-    public ResponseEntity<?> deleteUser(String phone,String password) {
+    public ResponseEntity<?> deleteUser(String phone, String password) {
 
         if (phone == null || phone.equals("anonymousUser")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("❌ Unauthorized access!");
         }
-
+    
         Optional<Users> user = usersRepository.findById(phone);
         if (user.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("❌ User not found!");
         }
+    
 
-        Users userDetails = user.get();
-        if (!encoder.encode(password).equals(userDetails.getPassword())) {
+        if (!encoder.matches(password, user.get().getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("❌ Wrong password!");
         }
-
+    
         usersRepository.delete(user.get());
         return ResponseEntity.ok("✅ User deleted successfully!");
     }
+    
 
     public ResponseEntity<?> changePassword(String phone, Map<String, String> passwordMap) {
 
