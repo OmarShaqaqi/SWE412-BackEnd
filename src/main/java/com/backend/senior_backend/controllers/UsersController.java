@@ -27,6 +27,13 @@ public class UsersController {
         
     }
 
+/*************  ✨ Codeium Command ⭐  *************/
+/**
+ * Handles user login requests.
+ * 
+ * @param request the login request containing user credentials
+ * @return a ResponseEntity containing a map with a token if login is successful,
+/******  136b4807-a288-4688-8b57-de732139038b  *******/
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequestDTO request) {
         Map<String, String> response = usersService.loginUser(request);

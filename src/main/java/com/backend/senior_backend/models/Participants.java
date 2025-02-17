@@ -23,6 +23,6 @@ public class Participants {
     @JoinColumn(name = "user_phone", nullable = false)
     private Users user;
 
-    @Column(nullable = false, insertable = false)
+    @Column(nullable = false)
     private boolean isLeader;
 }
