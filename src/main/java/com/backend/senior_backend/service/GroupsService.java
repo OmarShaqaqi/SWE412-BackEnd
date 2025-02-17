@@ -20,13 +20,13 @@ public class GroupsService {
     @Autowired
     private ParticipantsService participantsService;
     
-    public String addGroup(Groups group, String phone, BindingResult bindingResult) {
+    public Groups addGroup(Groups group, String phone, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return "❌ Error adding group: " + bindingResult.getFieldError("name").getDefaultMessage();
+            return null;
         }
         groupsRepository.save(group);
         participantsService.addParticipant(group.getId(), phone, true);
-        return "✅ Group added successfully!";
+        return group;
     }
 
     public List<Groups> getGroups(String phone) {
