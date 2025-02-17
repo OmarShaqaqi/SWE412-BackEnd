@@ -1,6 +1,7 @@
 package com.backend.senior_backend.service;
 
 
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,11 @@ public class ParticipantsService {
 
         participantsRepository.save(participant);
         return "✅ Participant added successfully!";
+    }
+
+    public List<Groups> findAllGroups(String phone) {
+        List<Participants> participants = participantsRepository.findAllByUserPhone(phone);
+        return participants.stream().map(Participants::getGroup).toList();
     }
     
    

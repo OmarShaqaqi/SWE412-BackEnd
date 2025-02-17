@@ -2,7 +2,9 @@ package com.backend.senior_backend.service;
 
 
 
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
@@ -25,6 +27,11 @@ public class GroupsService {
         groupsRepository.save(group);
         participantsService.addParticipant(group.getId(), phone, true);
         return "✅ Group added successfully!";
+    }
+
+    public List<Groups> getGroups(String phone) {
+        List<Groups> groups = participantsService.findAllGroups(phone);
+        return groups;
     }
     
 }
