@@ -29,7 +29,7 @@ public class ParticipantsController {
         Long groupId = request.getGroup_id();
         String username = request.getUsername();
 
-        participantsService.addParticipant(groupId, phone, false)
+        participantsService.addParticipant(groupId, phone, false);
 
         return "Received group_id: " + groupId + ", username: " + username + ", phone: " + phone;
     }
