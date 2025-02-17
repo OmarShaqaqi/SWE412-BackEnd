@@ -27,6 +27,7 @@ public class ParticipantsService {
     private GroupsRepository groupsRepository;
 
     public String addParticipant(Long groupId, String phone, boolean isLeader) {
+        if (isLeader) {
         Optional<Groups> groupOpt = groupsRepository.findById(groupId);
         Optional<Users> userOpt = usersRepository.findByPhone(phone);
         
@@ -39,6 +40,29 @@ public class ParticipantsService {
 
         participantsRepository.save(participant);
         return "✅ Participant added successfully!";
+
+        }
+        else {
+            if (!usersRepository.findByPhone(phone).isPresent()) {
+                return "❌ User not found!";
+            }
+            else if(participantsRepository.findAllByUserPhone(phone).stream().anyMatch(p -> p.getGroup().getId() == groupId)) {
+                return "❌ User already in group!";
+            }
+            Optional<Groups> groupOpt = groupsRepository.findById(groupId);
+            Optional<Users> userOpt = usersRepository.findByPhone(phone);
+            
+            ParticipantsId participantsId = new ParticipantsId(groupId, phone);
+            Participants participant = new Participants();
+            participant.setId(participantsId);
+            participant.setGroup(groupOpt.get());
+            participant.setUser(userOpt.get());
+            participant.setLeader(isLeader);
+            participantsRepository.save(participant);
+
+            return "✅ Participant added successfully!";
+        }
+        
     }
 
     public List<Groups> findAllGroups(String phone) {
