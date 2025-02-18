@@ -76,7 +76,7 @@ public class ParticipantsService {
 
     public String addParticipant(Long groupId, String username) {
 
-        if (!usersRepository.findByPhone(username).isPresent()) {
+        if (!usersRepository.findByUsername(username).isPresent()) {
             return "❌ User not found!";
         }
         else if(participantsRepository.findAllByUserPhone(username).stream().anyMatch(p -> p.getGroup().getId() == groupId)) {
