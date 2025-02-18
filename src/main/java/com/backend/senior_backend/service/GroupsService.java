@@ -25,7 +25,7 @@ public class GroupsService {
             return null;
         }
         groupsRepository.save(group);
-        participantsService.addParticipant(group.getId(), phone, true);
+        participantsService.addLeader(group.getId(), phone, true);
         return group;
     }
 
