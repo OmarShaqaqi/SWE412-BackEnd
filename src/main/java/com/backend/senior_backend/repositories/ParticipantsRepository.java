@@ -7,7 +7,5 @@ import com.backend.senior_backend.models.Participants;
 import com.backend.senior_backend.models.ParticipantsId;
 
 public interface ParticipantsRepository extends JpaRepository<Participants, ParticipantsId>{
-
     List<Participants> findAllByUserPhone(String phone);
-
 }

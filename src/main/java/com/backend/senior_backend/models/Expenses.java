@@ -6,9 +6,8 @@ import java.util.Date;
 
 @Entity
 @Table(name = "Expense")
-@Getter
-@Setter
 @NoArgsConstructor
+@Data
 @AllArgsConstructor
 public class Expenses {
 
@@ -33,4 +32,6 @@ public class Expenses {
         @JoinColumn(name = "category_name", referencedColumnName = "name")
     })
     private Categories category;
+
+    private String description;
 }

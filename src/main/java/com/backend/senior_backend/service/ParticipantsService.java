@@ -72,6 +72,12 @@ public class ParticipantsService {
         return participants.stream().map(Participants::getGroup).toList();
     }
 
+    public boolean isGroupLeader(Long groupId, String phone) {
+        Optional<Participants> participantOpt = participantsRepository.findById(new ParticipantsId(groupId, phone));
+        
+        return participantOpt.isPresent() && participantOpt.get().isLeader();
+    }
+
 
 
     public String addParticipant(Long groupId, String username) {
