@@ -22,6 +22,9 @@ public class Expenses {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 
+    @Column(nullable = false)
+    private String status;
+
     @ManyToOne
     @JoinColumn(name = "user_phone", nullable = false)
     private Users user;

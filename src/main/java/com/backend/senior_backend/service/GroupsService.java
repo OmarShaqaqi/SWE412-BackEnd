@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
+import com.backend.senior_backend.dto.GroupWithRoleDTO;
 import com.backend.senior_backend.models.Groups;
 import com.backend.senior_backend.repositories.GroupsRepository;
 
@@ -31,6 +32,10 @@ public class GroupsService {
 
     public List<Groups> getGroups(String phone) {
         List<Groups> groups = participantsService.findAllGroups(phone);
+        return groups;
+    }
+    public List<GroupWithRoleDTO> getGroupsWithRoles(String phone) {
+        List<GroupWithRoleDTO> groups = participantsService.findAllGroupsWithRoles(phone);
         return groups;
     }
     

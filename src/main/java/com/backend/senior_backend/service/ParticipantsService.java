@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import com.backend.senior_backend.dto.GroupWithRoleDTO;
 import com.backend.senior_backend.repositories.GroupsRepository;
 import com.backend.senior_backend.repositories.ParticipantsRepository;
 import com.backend.senior_backend.repositories.UsersRepository;
@@ -65,7 +65,12 @@ public class ParticipantsService {
         
     }
 
-
+    public List<GroupWithRoleDTO> findAllGroupsWithRoles(String phone) {
+        List<Participants> participants = participantsRepository.findAllByUserPhone(phone);
+        return participants.stream()
+                .map(participant -> new GroupWithRoleDTO(participant.getGroup(), participant.isLeader()))
+                .toList();
+    }
 
     public List<Groups> findAllGroups(String phone) {
         List<Participants> participants = participantsRepository.findAllByUserPhone(phone);

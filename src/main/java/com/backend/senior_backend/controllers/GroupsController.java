@@ -2,6 +2,7 @@ package com.backend.senior_backend.controllers;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.backend.senior_backend.dto.GroupWithRoleDTO;
 import com.backend.senior_backend.models.Groups;
 import com.backend.senior_backend.service.GroupsService;
 
@@ -43,9 +44,9 @@ public class GroupsController {
 
 
     @GetMapping("/groups/get")
-    public ResponseEntity<List<Groups>> getGroups() {
+    public ResponseEntity<List<GroupWithRoleDTO>> getGroups() {
         String phone = SecurityContextHolder.getContext().getAuthentication().getName();
-        List<Groups> groups = groupsService.getGroups(phone);
+        List<GroupWithRoleDTO> groups = groupsService.getGroupsWithRoles(phone);
         return ResponseEntity.ok(groups);
     }
     
