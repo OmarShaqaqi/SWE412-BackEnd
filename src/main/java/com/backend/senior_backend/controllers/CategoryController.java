@@ -1,6 +1,7 @@
 package com.backend.senior_backend.controllers;
 
 import com.backend.senior_backend.dto.CategoryRequest;
+import com.backend.senior_backend.dto.CategoryResponseDTO;
 import com.backend.senior_backend.models.*;
 import com.backend.senior_backend.service.CategoriesService;
 import com.backend.senior_backend.service.ParticipantsService;
@@ -11,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/categories")
@@ -37,9 +39,18 @@ public class CategoryController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<Categories>> getCategories(@RequestParam Long groupId) {
+    public ResponseEntity<List<CategoryResponseDTO>> getCategories(@RequestParam Long groupId) {
         List<Categories> categories = categoryService.getCategories(groupId);
-        return ResponseEntity.ok(categories);
+
+        // Map Categories to CategoryResponseDTO
+        List<CategoryResponseDTO> response = categories.stream()
+            .map(category -> new CategoryResponseDTO(
+                category.getId().getGroupId(),
+                category.getId().getName()
+            ))
+            .collect(Collectors.toList());
+
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/delete")

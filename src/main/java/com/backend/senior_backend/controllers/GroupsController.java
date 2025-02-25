@@ -19,6 +19,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
@@ -44,11 +45,25 @@ public class GroupsController {
 
 
     @GetMapping("/groups/get")
-    public ResponseEntity<List<GroupWithRoleDTO>> getGroups() {
+    public ResponseEntity<List<Groups>> getGroups() {
         String phone = SecurityContextHolder.getContext().getAuthentication().getName();
-        List<GroupWithRoleDTO> groups = groupsService.getGroupsWithRoles(phone);
+        List<Groups> groups = groupsService.getGroups(phone);
         return ResponseEntity.ok(groups);
     }
+
+    @GetMapping("/groups/{groupId}/user-role")
+    public ResponseEntity<Boolean> getUserRoleInGroup(@PathVariable Long groupId) {
+        String phone = SecurityContextHolder.getContext().getAuthentication().getName();  // Get the current user's phone from JWT
+        Boolean role = groupsService.getUserRoleInGroup(phone, groupId);  // Get the user's role from the service layer
+        
+        if (role != null) {
+            return ResponseEntity.ok(role);  // Return the role (e.g., "leader" or "participant")
+        } else {
+            return ResponseEntity.status(404).body(null);  // Return an error if the role is not found
+        }
+    }
+
+    
     
     
     

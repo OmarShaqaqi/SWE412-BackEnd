@@ -8,4 +8,5 @@ import com.backend.senior_backend.models.ParticipantsId;
 
 public interface ParticipantsRepository extends JpaRepository<Participants, ParticipantsId>{
     List<Participants> findAllByUserPhone(String phone);
+    Participants findByGroupIdAndUserPhone(Long groupId, String userPhone);
 }

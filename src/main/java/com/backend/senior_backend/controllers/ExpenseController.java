@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,12 +17,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.senior_backend.dto.ExpenseRequest;
+import com.backend.senior_backend.dto.ExpensesResponse;
 import com.backend.senior_backend.models.Expenses;
 import com.backend.senior_backend.service.ExpensesService;
 
 @RestController
-public class ExpensesController {
-    @RestController
 @RequestMapping("/expenses")
 public class ExpenseController {
 
@@ -48,7 +48,8 @@ public class ExpenseController {
                 request.getCategoryName(),
                 phone,
                 request.getAmount(),
-                new java.sql.Date(new Date().getTime()),
+                request.getDate() == null ?  new java.sql.Date(new Date().getTime()) : request.getDate(),
+                
                 request.getDescription()
         );
         return ResponseEntity.ok(response);
@@ -60,11 +61,36 @@ public class ExpenseController {
         return ResponseEntity.ok(expenses);
     }
 
+    @GetMapping("/list/{groupId}")
+    public ResponseEntity<List<ExpensesResponse>> getExpenses(@PathVariable Long groupId) {
+        List<ExpensesResponse> expenses = expenseService.getExpensesByGroupId(groupId);
+        return ResponseEntity.ok(expenses);
+    }
+
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteExpense(@RequestParam Long expenseId) {
         String response = expenseService.deleteExpense(expenseId);
         return ResponseEntity.ok(response);
     }
-}
 
+     // ✅ Approve an expense
+    @PostMapping("/approve")
+    public ResponseEntity<String> approveExpense(@RequestParam Long expenseId) {
+        System.out.println("Expense ID: " + expenseId);
+        String leaderPhone = SecurityContextHolder.getContext().getAuthentication().getName();
+        boolean success = expenseService.updateExpenseStatus(expenseId, "APPROVED", leaderPhone);
+
+        return success ? ResponseEntity.ok("Expense approved") :
+                ResponseEntity.badRequest().body("Approval failed");
+    }
+
+    // ✅ Reject an expense
+    @PostMapping("/reject")
+    public ResponseEntity<String> rejectExpense(@RequestParam Long expenseId) {
+        String leaderPhone = SecurityContextHolder.getContext().getAuthentication().getName();
+        boolean success = expenseService.updateExpenseStatus(expenseId, "REJECTED", leaderPhone);
+
+        return success ? ResponseEntity.ok("Expense rejected") :
+                ResponseEntity.badRequest().body("Rejection failed");
+    }
 }

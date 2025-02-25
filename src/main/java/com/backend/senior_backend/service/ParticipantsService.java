@@ -3,6 +3,8 @@ package com.backend.senior_backend.service;
 
 import java.util.List;
 import java.util.Optional;
+
+import org.apache.kafka.common.protocol.types.Field.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.backend.senior_backend.dto.GroupWithRoleDTO;
@@ -108,5 +110,22 @@ public class ParticipantsService {
         
     }
     
+    public Boolean getUserRoleInGroup(String phone, Long groupId) {
+        // Fetch the group and participant from the database
+        Groups group = groupsRepository.findById(groupId).orElse(null);
+        if (group == null) {
+            return null;  // If the group does not exist
+        }
+
+        // Find the participant record for this group and user
+        Participants participant = participantsRepository.findByGroupIdAndUserPhone(groupId, phone);
+        
+        if (participant == null) {
+            return null;  // If no participant record exists, return null
+        }
+
+        // Return the role of the participant (e.g., "leader" or "participant")
+        return participant.isLeader();
+    }
    
 }

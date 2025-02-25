@@ -38,5 +38,14 @@ public class GroupsService {
         List<GroupWithRoleDTO> groups = participantsService.findAllGroupsWithRoles(phone);
         return groups;
     }
+
+     // New method to get the user's role in a specific group
+     public Boolean getUserRoleInGroup(String phone, Long groupId) {
+        
+        // Find the participant record for this group and user
+        Boolean participantRole = participantsService.getUserRoleInGroup(phone, groupId);
+        
+        return participantRole;
+    }
     
 }
