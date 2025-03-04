@@ -8,6 +8,7 @@ import com.backend.senior_backend.models.Users;
 import com.backend.senior_backend.repositories.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +81,10 @@ public class UsersService {
         response.put("token", token);
         return response;
        
+    }
+
+    public List<Users> getUsers(){
+        return usersRepository.findAll();
     }
 
     public ResponseEntity<?> getProfile(String phone) {

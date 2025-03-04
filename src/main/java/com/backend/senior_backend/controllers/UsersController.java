@@ -10,6 +10,9 @@ import com.backend.senior_backend.service.UsersService;
 import jakarta.validation.Valid;
 import com.backend.senior_backend.dto.LoginRequestDTO;
 import com.backend.senior_backend.models.Users;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 public class UsersController {
@@ -46,6 +49,12 @@ public class UsersController {
 
         return usersService.getProfile(phone);
     }
+
+    @GetMapping("/getUsers")
+    public ResponseEntity<?> getMethodName() {
+        return ResponseEntity.ok(usersService.getUsers());
+    }
+    
 
     @PostMapping("/deleteuser")
     public ResponseEntity<?> deleteUser(@RequestBody Map<String, String> requestMap) {
