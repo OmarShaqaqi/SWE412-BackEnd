@@ -10,5 +10,6 @@ import com.backend.senior_backend.models.Expenses;
 public interface ExpenseRepository extends JpaRepository<Expenses, Long>{
     List<Expenses> findAllByCategoryId(CategoriesId categoryId);
     List<Expenses> findAllByCategoryIdGroupId(Long groupId);
+    List<Expenses> findByCategory_GroupIdAndUser_Phone(Long groupId, String phone);
 
 }

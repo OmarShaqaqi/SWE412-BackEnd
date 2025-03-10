@@ -8,6 +8,7 @@ import org.apache.kafka.common.protocol.types.Field.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.backend.senior_backend.dto.GroupWithRoleDTO;
+import com.backend.senior_backend.dto.ParticipantExpenseDTO;
 import com.backend.senior_backend.repositories.GroupsRepository;
 import com.backend.senior_backend.repositories.ParticipantsRepository;
 import com.backend.senior_backend.repositories.UsersRepository;
@@ -27,6 +28,9 @@ public class ParticipantsService {
 
     @Autowired
     private GroupsRepository groupsRepository;
+
+    @Autowired
+    private ExpensesService expensesService;
 
     public String addLeader(Long groupId, String phone, boolean isLeader) {
         if (isLeader) {
@@ -72,6 +76,17 @@ public class ParticipantsService {
         return participants.stream()
                 .map(participant -> new GroupWithRoleDTO(participant.getGroup(), participant.isLeader()))
                 .toList();
+    }
+
+    public List<ParticipantExpenseDTO> findAllParticipantsWithRolesAndExpenses(int groupId) {
+        List<Participants> participants = participantsRepository.findAllByGroupId(groupId);
+
+        List<ParticipantExpenseDTO> participantsWithExpenses = participants.stream()
+        .map(participant -> new ParticipantExpenseDTO(participant.getUser().getPhone(),
+        expensesService.getTotalExpenses(participant.getGroup().getId(),
+        participant.getUser().getPhone()), participant.isLeader())).toList();
+
+        return participantsWithExpenses;
     }
 
     public List<Groups> findAllGroups(String phone) {
