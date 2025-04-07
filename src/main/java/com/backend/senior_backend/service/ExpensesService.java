@@ -3,6 +3,7 @@ package com.backend.senior_backend.service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -13,12 +14,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.backend.senior_backend.repositories.ExpenseRepository;
+import com.backend.senior_backend.repositories.ParticipantsRepository;
 import com.backend.senior_backend.models.Users;
 import com.backend.senior_backend.repositories.UsersRepository;
+
+
 import com.backend.senior_backend.dto.ExpensesResponse;
+import com.backend.senior_backend.dto.ExpensesSummaryDTO;
 import com.backend.senior_backend.models.Categories;
 import com.backend.senior_backend.models.CategoriesId;
 import com.backend.senior_backend.models.Expenses;
+import com.backend.senior_backend.models.Groups;
 import com.backend.senior_backend.repositories.CategoriesRepository;
 
 @Service
@@ -36,6 +42,9 @@ public class ExpensesService {
 
     @Autowired
     private CategoriesRepository categoriesRepository;
+
+    @Autowired
+    private ParticipantsRepository participantsRepository;
 
     public String addExpense(Long groupId, String categoryName, String userPhone, BigDecimal amount, Date date, String description) {
         Optional<Users> userOpt = usersRepository.findByPhone(userPhone);
@@ -172,6 +181,27 @@ public class ExpensesService {
             throw new IllegalArgumentException("Invalid time group: " + input +
                 ". Valid values are: DAY, MONTH, YEAR");
         }
+    }
+
+
+    public List<ExpensesSummaryDTO> getTodaysExpenses(String phone) {
+        Date today = new Date();
+        List<Long> groups = participantsRepository.findGroupIdsByUserPhone(phone);
+        List<Expenses> allExpenses = new ArrayList<>();
+
+        for (Long groupId : groups) {
+            List<Expenses> temporary_expenses = expensesRepository.findAllByCategoryIdGroupIdAndDate(groupId, today);
+            allExpenses.addAll(temporary_expenses);
+        }
+
+        return allExpenses.stream()
+                .map(e -> new ExpensesSummaryDTO(
+                    e.getDate(),
+                    e.getAmount(),
+                    e.getCategory().getId().getName()
+                ))
+                .collect(Collectors.toList());
+
     }
     
 

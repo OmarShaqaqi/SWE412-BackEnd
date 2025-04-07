@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import com.backend.senior_backend.dto.ExpensesSummaryDTO;
 
 import com.backend.senior_backend.dto.ExpenseRequest;
 import com.backend.senior_backend.dto.ExpensesResponse;
@@ -107,5 +108,14 @@ public class ExpenseController {
 
 
     }
+
+    @GetMapping("/today")
+    public List<ExpensesSummaryDTO> getTodaysExpenses() {
+        String phone = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        return expenseService.getTodaysExpenses(phone);
+
+    }
+    
     
 }
