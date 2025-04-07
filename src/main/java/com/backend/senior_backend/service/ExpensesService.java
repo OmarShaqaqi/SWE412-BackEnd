@@ -1,9 +1,11 @@
 package com.backend.senior_backend.service;
 
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
-
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -21,6 +23,10 @@ import com.backend.senior_backend.repositories.CategoriesRepository;
 
 @Service
 public class ExpensesService {
+
+    public enum TimeGroup {
+        DAY, MONTH, YEAR
+    }
 
     @Autowired
     private ExpenseRepository expensesRepository;
@@ -111,4 +117,62 @@ public class ExpensesService {
         }
         return false;
     }
+
+    public Map<String, BigDecimal> getUserExpenses(String phone, String filter) {
+
+        List<Expenses> expenses = expensesRepository.findAllByUser_Phone(phone);
+
+        TimeGroup groupBy = parseTimeGroup(filter);
+        return getUserExpensesGroupedBy(expenses, groupBy);
+
+
+    }
+
+
+    public Map<String, BigDecimal> getUserExpensesGroupedBy(List<Expenses> expenses, TimeGroup groupBy) {
+        if (expenses == null || expenses.isEmpty()) {
+            System.out.println("⚠️ No expenses provided.");
+            return Map.of();
+        }
+    
+        return expenses.stream()
+            .filter(e -> e != null && e.getDate() != null)
+            .collect(Collectors.groupingBy(
+                e -> {
+                    Date date = e.getDate();
+                    LocalDate localDate;
+    
+                    if (date instanceof java.sql.Date sqlDate) {
+                        localDate = sqlDate.toLocalDate();
+                    } else {
+                        localDate = date.toInstant()
+                                        .atZone(ZoneId.systemDefault())
+                                        .toLocalDate();
+                    }
+    
+                    return switch (groupBy) {
+                        case DAY -> localDate.toString();
+                        case MONTH -> localDate.getYear() + "-" + String.format("%02d", localDate.getMonthValue());
+                        case YEAR -> String.valueOf(localDate.getYear());
+                    };
+                },
+                Collectors.mapping(
+                    Expenses::getAmount,
+                    Collectors.reducing(BigDecimal.ZERO, BigDecimal::add)
+                )
+            ));
+    }
+    
+    
+
+    public TimeGroup parseTimeGroup(String input) {
+        try {
+            return TimeGroup.valueOf(input.trim().toUpperCase());
+        } catch (IllegalArgumentException | NullPointerException e) {
+            throw new IllegalArgumentException("Invalid time group: " + input +
+                ". Valid values are: DAY, MONTH, YEAR");
+        }
+    }
+    
+
 }

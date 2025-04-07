@@ -1,8 +1,10 @@
 package com.backend.senior_backend.controllers;
 
 import java.math.BigDecimal;
+import java.sql.Time;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import com.backend.senior_backend.dto.ExpenseRequest;
 import com.backend.senior_backend.dto.ExpensesResponse;
 import com.backend.senior_backend.models.Expenses;
 import com.backend.senior_backend.service.ExpensesService;
+import com.backend.senior_backend.service.ExpensesService.TimeGroup;
 
 @RestController
 @RequestMapping("/expenses")
@@ -93,4 +96,16 @@ public class ExpenseController {
         return success ? ResponseEntity.ok("Expense rejected") :
                 ResponseEntity.badRequest().body("Rejection failed");
     }
+
+    @GetMapping("/{filter}")
+    public Map<String,BigDecimal> getExpensesByPeriod(@PathVariable String filter) {
+
+        String phone = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        System.out.println("Filter: " + filter);
+        return expenseService.getUserExpenses(phone,filter);
+
+
+    }
+    
 }

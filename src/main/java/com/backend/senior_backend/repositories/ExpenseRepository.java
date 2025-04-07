@@ -11,5 +11,6 @@ public interface ExpenseRepository extends JpaRepository<Expenses, Long>{
     List<Expenses> findAllByCategoryId(CategoriesId categoryId);
     List<Expenses> findAllByCategoryIdGroupId(Long groupId);
     List<Expenses> findByCategory_GroupIdAndUser_Phone(Long groupId, String phone);
+    List<Expenses> findAllByUser_Phone(String phone);
 
 }
