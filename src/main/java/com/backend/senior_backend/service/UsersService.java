@@ -177,6 +177,14 @@ public class UsersService {
         jwtService.invalidateToken(token);
         return "✅ User signed out successfully!";
     }
+
+    public Boolean isUserAvailable(String username) {
+
+        if (usersRepository.findByUsername(username).isPresent()) {
+            return true;
+        }
+        return false;
+    }
 } 
 
 

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.backend.senior_backend.dto.GroupWithRoleDTO;
 import com.backend.senior_backend.dto.ParticipantExpenseDTO;
+import com.backend.senior_backend.dto.ParticipantInformationDTO;
 import com.backend.senior_backend.repositories.GroupsRepository;
 import com.backend.senior_backend.repositories.ParticipantsRepository;
 import com.backend.senior_backend.repositories.UsersRepository;
@@ -142,5 +143,27 @@ public class ParticipantsService {
         // Return the role of the participant (e.g., "leader" or "participant")
         return participant.isLeader();
     }
+
+
+    public ParticipantInformationDTO getParticipantInformation(Long groupId, String phone) {
+        // Fetch the group and participant from the database
+        Groups group = groupsRepository.findById(groupId).orElse(null);
+        if (group == null) {
+            return null;  // If the group does not exist
+        }
+
+        // Find the participant record for this group and user
+        Participants participant = participantsRepository.findByGroupIdAndUserPhone(groupId, phone);
+        
+        if (participant == null) {
+            return null;  // If no participant record exists, return null
+        }
+
+        // Return the role of the participant (e.g., "leader" or "participant")
+        return new ParticipantInformationDTO(participant.getUser().getPhone(),
+                                            participant.getUser().getUsername(),
+                                            expensesService.getTotalExpenses(groupId, phone));
+    }
+
    
 }

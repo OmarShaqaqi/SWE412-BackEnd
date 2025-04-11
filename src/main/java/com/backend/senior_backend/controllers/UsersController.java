@@ -75,6 +75,12 @@ public class UsersController {
         return usersService.changePassword(phone, passwordMap);
     }
 
+    @GetMapping("/isuseravailable/{username}")
+    public ResponseEntity<Boolean> isUserAvailable(@PathVariable String username) {
+        System.out.println("Username: " + username);
+        return ResponseEntity.ok(usersService.isUserAvailable(username));
+    }
+
     @PostMapping("/signout")
     public ResponseEntity<?> signOut(@RequestHeader("Authorization") String token) {
         if (token.startsWith("Bearer ")) {

@@ -17,8 +17,7 @@ import com.backend.senior_backend.repositories.ExpenseRepository;
 import com.backend.senior_backend.repositories.ParticipantsRepository;
 import com.backend.senior_backend.models.Users;
 import com.backend.senior_backend.repositories.UsersRepository;
-
-
+import com.backend.senior_backend.dto.ExpensesDetails;
 import com.backend.senior_backend.dto.ExpensesResponse;
 import com.backend.senior_backend.dto.ExpensesSummaryDTO;
 import com.backend.senior_backend.models.Categories;
@@ -202,6 +201,21 @@ public class ExpensesService {
                 ))
                 .collect(Collectors.toList());
 
+    }
+
+    public ExpensesDetails getExpense(Long expenseId) {
+        Expenses expense = expensesRepository.findById(expenseId).orElse(null);
+        if (expense == null) {
+            return null;
+        }
+        return new ExpensesDetails(
+            expense.getDate(),
+            expense.getAmount(),
+            expense.getCategory().getId().getName(),
+            expense.getUser().getPhone(),
+            expense.getStatus(),
+            expense.getDescription()
+        );
     }
     
 
