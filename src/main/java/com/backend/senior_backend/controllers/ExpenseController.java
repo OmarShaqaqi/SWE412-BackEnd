@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.backend.senior_backend.dto.ExpensesSummaryDTO;
 
 import com.backend.senior_backend.dto.ExpenseRequest;
+import com.backend.senior_backend.dto.ExpensesDetails;
 import com.backend.senior_backend.dto.ExpensesResponse;
 import com.backend.senior_backend.models.Expenses;
 import com.backend.senior_backend.service.ExpensesService;
@@ -66,8 +67,8 @@ public class ExpenseController {
     }
 
     @GetMapping("/list/{groupId}")
-    public ResponseEntity<List<ExpensesResponse>> getExpenses(@PathVariable Long groupId) {
-        List<ExpensesResponse> expenses = expenseService.getExpensesByGroupId(groupId);
+    public ResponseEntity<List<ExpensesDetails>> getExpenses(@PathVariable Long groupId) {
+        List<ExpensesDetails> expenses = expenseService.getExpensesByGroupId(groupId);
         return ResponseEntity.ok(expenses);
     }
 
@@ -103,7 +104,6 @@ public class ExpenseController {
 
         String phone = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        System.out.println("Filter: " + filter);
         return expenseService.getUserExpenses(phone,filter);
 
 

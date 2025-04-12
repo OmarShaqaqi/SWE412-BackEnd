@@ -5,7 +5,7 @@ import java.util.Date;
 import lombok.Data;
 @Data
 public class ExpensesDetails {
-
+    private Long id;
     private Date date;
     private BigDecimal amount;
     private String categoryName;
@@ -13,7 +13,8 @@ public class ExpensesDetails {
     private String status;
     private String description;
 
-    public ExpensesDetails(Date date, BigDecimal amount, String categoryName, String actor, String status, String description) {
+    public ExpensesDetails(Long id ,Date date, BigDecimal amount, String categoryName, String actor, String status, String description) {
+        this.id = id;
         this.date = date;
         this.amount = amount;
         this.categoryName = categoryName;

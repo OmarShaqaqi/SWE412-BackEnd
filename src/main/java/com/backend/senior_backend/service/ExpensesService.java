@@ -95,16 +95,18 @@ public class ExpensesService {
         return "✅ Expense deleted successfully!";
     }
 
-    public List<ExpensesResponse> getExpensesByGroupId(Long groupId) {
+    public List<ExpensesDetails> getExpensesByGroupId(Long groupId) {
         List<Expenses> expenses = expensesRepository.findAllByCategoryIdGroupId(groupId);
         // Map the Expenses entities to the ExpensesResponse DTO
-        List<ExpensesResponse> response = expenses.stream()
-            .map(e -> new ExpensesResponse(
+        List<ExpensesDetails> response = expenses.stream()
+            .map(e -> new  ExpensesDetails(
                 e.getId(),
                 e.getDate(),
                 e.getAmount(),
+                e.getCategory().getId().getName(),
+                e.getUser().getUsername(),
                 e.getStatus(),
-                e.getCategory().getId().getName()
+                e.getDescription()
             ))
             .collect(Collectors.toList());
 
@@ -209,10 +211,11 @@ public class ExpensesService {
             return null;
         }
         return new ExpensesDetails(
+            expense.getId(),
             expense.getDate(),
             expense.getAmount(),
             expense.getCategory().getId().getName(),
-            expense.getUser().getPhone(),
+            expense.getUser().getUsername(),
             expense.getStatus(),
             expense.getDescription()
         );
