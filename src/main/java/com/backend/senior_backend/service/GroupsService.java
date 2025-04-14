@@ -49,10 +49,10 @@ public class GroupsService {
         return participantRole;
     }
 
-    public budgetAndExpensesDTO getPersonalBudgetAndExpenses(String phone) {
+    // public budgetAndExpensesDTO getPersonalBudgetAndExpenses(String phone) {
 
-        
-    }
+
+    // }
 
     
 }
