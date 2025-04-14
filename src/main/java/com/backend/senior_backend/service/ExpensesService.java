@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -219,6 +220,35 @@ public class ExpensesService {
             expense.getStatus(),
             expense.getDescription()
         );
+    }
+
+    public List<ExpensesDetails> getExpensesByDate(String date, String phone) {
+        
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-M-d");
+        Date new_date ;
+        try {
+            new_date = formatter.parse(date);
+            List<Expenses> expenses = expensesRepository.findAllByUser_PhoneAndDate(phone, new_date);
+            return expenses.stream()
+            .map(e -> new ExpensesDetails(
+                e.getId(),
+                e.getDate(),
+                e.getAmount(),
+                e.getCategory().getId().getName(),
+                e.getUser().getUsername(),
+                e.getStatus(),
+                e.getDescription()
+            ))
+            .collect(Collectors.toList());
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+        
+       
+
+    
+        
     }
     
 
