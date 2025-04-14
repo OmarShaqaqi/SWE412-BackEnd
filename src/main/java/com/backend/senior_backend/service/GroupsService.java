@@ -77,5 +77,17 @@ public class GroupsService {
         return null;
     }
 
+    public budgetAndExpensesDTO getGroupBudgetAndExpenses(String phone, Long groupId) {
+
+        List<Long> groupIds = participantsRepository.findGroupIdsByUserPhone(phone);
+        Groups group = groupsRepository.findById(groupIds.get(0)).orElse(null);
+
+        int budget = group.getBudget();
+        Double expenses = expensesService.getTotalExpensesAllUsers(groupId);
+        budgetAndExpensesDTO budgetAndExpenses = new budgetAndExpensesDTO(budget, expenses);
+        return budgetAndExpenses;
+    }
+
+
     
 }

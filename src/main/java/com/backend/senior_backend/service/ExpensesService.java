@@ -86,6 +86,19 @@ public class ExpensesService {
         // Return the total amount as a double
         return totalAmount.doubleValue();
     }
+    public double getTotalExpensesAllUsers(Long groupId) {
+
+        List<Expenses> expensesList = expensesRepository.findByCategory_GroupId(groupId);
+        
+        // Calculate the total amount
+        BigDecimal totalAmount = expensesList.stream()
+            .map(Expenses::getAmount) // Extract the amount from each expense
+            .reduce(BigDecimal.ZERO, BigDecimal::add); // Sum up the amounts
+
+        // Return the total amount as a double
+        return totalAmount.doubleValue();
+    }
+    
 
     public String deleteExpense(Long expenseId) {
         Optional<Expenses> expenseOpt = expensesRepository.findById(expenseId);

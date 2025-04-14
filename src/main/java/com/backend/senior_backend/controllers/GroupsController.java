@@ -70,6 +70,13 @@ public class GroupsController {
         return groupsService.getPersonalBudgetAndExpenses(phone);
         
     }
+
+    @GetMapping("/groups/{groupId}")
+    public budgetAndExpensesDTO getGroupsWithRoles(@PathVariable Long groupId) {
+        String phone = SecurityContextHolder.getContext().getAuthentication().getName();  
+        return groupsService.getGroupBudgetAndExpenses(phone, groupId);
+        
+    }
     
 
     
