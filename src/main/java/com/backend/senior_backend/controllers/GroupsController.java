@@ -64,11 +64,12 @@ public class GroupsController {
         }
     }
 
-    // @GetMapping("/groups/personal")
-    // public budgetAndExpensesDTO getPersonalBudgetAndExpenses() {
-    //     String phone = SecurityContextHolder.getContext().getAuthentication().getName();  
+    @GetMapping("/groups/personal")
+    public budgetAndExpensesDTO getPersonalBudgetAndExpenses() {
+        String phone = SecurityContextHolder.getContext().getAuthentication().getName();  
+        return groupsService.getPersonalBudgetAndExpenses(phone);
         
-    // }
+    }
     
 
     

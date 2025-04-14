@@ -8,6 +8,6 @@ import lombok.Data;
 public class budgetAndExpensesDTO {
 
     final int budget;
-    final int expenses;
+    final Double expenses;
 
 }

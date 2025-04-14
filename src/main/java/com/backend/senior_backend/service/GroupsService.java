@@ -12,6 +12,7 @@ import com.backend.senior_backend.dto.GroupWithRoleDTO;
 import com.backend.senior_backend.dto.budgetAndExpensesDTO;
 import com.backend.senior_backend.models.Groups;
 import com.backend.senior_backend.repositories.GroupsRepository;
+import com.backend.senior_backend.repositories.ParticipantsRepository;
 
 @Service
 public class GroupsService {
@@ -21,6 +22,12 @@ public class GroupsService {
 
     @Autowired
     private ParticipantsService participantsService;
+
+    @Autowired
+    private ParticipantsRepository participantsRepository;
+
+    @Autowired
+    private ExpensesService expensesService;
     
     public Groups addGroup(Groups group, String phone, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -49,10 +56,26 @@ public class GroupsService {
         return participantRole;
     }
 
-    // public budgetAndExpensesDTO getPersonalBudgetAndExpenses(String phone) {
+    public budgetAndExpensesDTO getPersonalBudgetAndExpenses(String phone) {
 
+        List<Long> groupIds = participantsRepository.findGroupIdsByUserPhone(phone);
+        Groups group = getCorrectGroup(groupIds, "personal");
 
-    // }
+        int budget = group.getBudget();
+        Double expenses = expensesService.getTotalExpenses(group.getId(),phone);
+        budgetAndExpensesDTO budgetAndExpenses = new budgetAndExpensesDTO(budget, expenses);
+        return budgetAndExpenses;
+    }
+
+    public Groups getCorrectGroup(List<Long> groupIds,String name) {
+        for (Long groupId : groupIds) {
+            Groups group = groupsRepository.findById(groupId).orElse(null);
+            if (group.getName().equals(name)) {
+                return group;
+            }
+        }
+        return null;
+    }
 
     
 }

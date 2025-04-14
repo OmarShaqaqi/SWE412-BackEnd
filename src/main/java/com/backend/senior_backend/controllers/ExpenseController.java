@@ -117,7 +117,7 @@ public class ExpenseController {
 
     }
 
-    @GetMapping("date/{calendar}")
+    @GetMapping("/date/{calendar}")
     public List<ExpensesDetails> getMethodName(@PathVariable String calendar ) {
         String phone = SecurityContextHolder.getContext().getAuthentication().getName();
         return expenseService.getExpensesByDate(calendar, phone);
