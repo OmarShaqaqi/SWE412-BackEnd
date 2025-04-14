@@ -9,9 +9,8 @@ import org.springframework.http.HttpStatus;
 import com.backend.senior_backend.service.UsersService;
 import jakarta.validation.Valid;
 import com.backend.senior_backend.dto.LoginRequestDTO;
+import com.backend.senior_backend.dto.UserBudegtDTO;
 import com.backend.senior_backend.models.Users;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
@@ -24,9 +23,12 @@ public class UsersController {
     }
 
    @PostMapping("/signup")
-    public ResponseEntity<?> signUp(@Valid @RequestBody Users user, BindingResult bindingResult) {
+    public ResponseEntity<?> signUp(@Valid @RequestBody UserBudegtDTO user, BindingResult bindingResult) {
 
-        return usersService.newUser(user,bindingResult);
+        Users new_user = new Users(user.getPhone(),user.getEmail(),user.getPassword(),user.getUsername(),user.getFname(),user.getLname());
+        Double budget = user.getBudget();
+
+        return usersService.newUser(new_user,budget,bindingResult);
         
     }
 
