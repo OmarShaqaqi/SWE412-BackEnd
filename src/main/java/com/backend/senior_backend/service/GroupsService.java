@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
 import com.backend.senior_backend.dto.GroupWithRoleDTO;
+import com.backend.senior_backend.dto.budgetAndExpensesDTO;
 import com.backend.senior_backend.models.Groups;
 import com.backend.senior_backend.repositories.GroupsRepository;
 
@@ -47,5 +48,11 @@ public class GroupsService {
         
         return participantRole;
     }
+
+    public budgetAndExpensesDTO getPersonalBudgetAndExpenses(String phone) {
+
+        
+    }
+
     
 }

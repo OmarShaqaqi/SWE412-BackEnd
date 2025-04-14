@@ -224,7 +224,7 @@ public class ExpensesService {
 
     public List<ExpensesDetails> getExpensesByDate(String date, String phone) {
         
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-M-d");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         Date new_date ;
         try {
             new_date = formatter.parse(date);

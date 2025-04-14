@@ -3,6 +3,7 @@ package com.backend.senior_backend.controllers;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.senior_backend.dto.GroupWithRoleDTO;
+import com.backend.senior_backend.dto.budgetAndExpensesDTO;
 import com.backend.senior_backend.models.Groups;
 import com.backend.senior_backend.service.GroupsService;
 
@@ -62,6 +63,13 @@ public class GroupsController {
             return ResponseEntity.status(404).body(null);  // Return an error if the role is not found
         }
     }
+
+    @GetMapping("/groups/personal")
+    public budgetAndExpensesDTO getPersonalBudgetAndExpenses() {
+        String phone = SecurityContextHolder.getContext().getAuthentication().getName();  
+        
+    }
+    
 
     
     
