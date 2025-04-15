@@ -12,6 +12,7 @@ import com.backend.senior_backend.dto.LoginRequestDTO;
 import com.backend.senior_backend.models.Users;
 
 @RestController
+@CrossOrigin
 public class UsersController {
 
     private final UsersService usersService;
@@ -20,11 +21,11 @@ public class UsersController {
         this.usersService = usersService;
     }
 
-   @PostMapping("/signup")
+    @PostMapping("/signup")
     public ResponseEntity<?> signUp(@Valid @RequestBody Users user, BindingResult bindingResult) {
 
-        return usersService.newUser(user,bindingResult);
-        
+        return usersService.newUser(user, bindingResult);
+
     }
 
     @PostMapping("/login")
@@ -37,8 +38,6 @@ public class UsersController {
 
         return ResponseEntity.ok(response);
     }
-
-    
 
     @GetMapping("/getinfo")
     public ResponseEntity<?> getProfile() {
@@ -75,4 +74,10 @@ public class UsersController {
 
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/getallusers")
+    public ResponseEntity<?> getAllUsers() {
+        return ResponseEntity.ok(usersService.getAllUsers());
+    }
+
 }
