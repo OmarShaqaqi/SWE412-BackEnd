@@ -27,6 +27,8 @@ public class Complian {
 
     @Column(name = "user_phone", nullable = false)
     private String userPhone;
-    
+
+    @Column(name = "finshed", nullable = false)
+    private boolean status;
 
 }

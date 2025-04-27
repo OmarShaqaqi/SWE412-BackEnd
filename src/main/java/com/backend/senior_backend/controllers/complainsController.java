@@ -29,4 +29,15 @@ public class complainsController {
         Complian savedComplian = complainsService.createComplian(complian);
         return ResponseEntity.ok(savedComplian);
     }
+
+    // Endpoint to delete a complaint by ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteComplian(@PathVariable Long id) {
+        try {
+            complainsService.deleteComplianById(id);
+            return ResponseEntity.ok("Complaint with ID " + id + " deleted successfully.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+    }
 }

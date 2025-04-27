@@ -22,4 +22,13 @@ public class ComplainsService {
     public Complian createComplian(Complian complian) {
         return complianRepository.save(complian);
     }
+
+    // Delete a complaint by ID
+    public void deleteComplianById(Long id) {
+        if (complianRepository.existsById(id)) {
+            complianRepository.deleteById(id);
+        } else {
+            throw new RuntimeException("Complaint with ID " + id + " not found.");
+        }
+    }
 }
