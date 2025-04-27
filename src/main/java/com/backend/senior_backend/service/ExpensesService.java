@@ -88,7 +88,7 @@ public class ExpensesService {
     }
     public double getTotalExpensesAllUsers(Long groupId) {
 
-        List<Expenses> expensesList = expensesRepository.findByCategory_GroupId(groupId);
+        List<Expenses> expensesList = expensesRepository.findByCategory_GroupIdAndStatus(groupId, "APPROVED");
         
         // Calculate the total amount
         BigDecimal totalAmount = expensesList.stream()

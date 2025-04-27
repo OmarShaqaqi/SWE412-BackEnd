@@ -47,7 +47,7 @@ public class ParticipantsController {
         return ResponseEntity.ok(participantsService.findAllParticipantsWithRolesAndExpenses(groupId));
     }
 
-    @PostMapping("/deleteParticipant")
+    @GetMapping("/deleteParticipant")
     public ResponseEntity<String> removeParticipant(@RequestParam Long groupId, @RequestParam String participant_phone) {
     
         String phone = SecurityContextHolder.getContext().getAuthentication().getName();

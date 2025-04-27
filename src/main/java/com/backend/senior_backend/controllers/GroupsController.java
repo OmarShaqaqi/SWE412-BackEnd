@@ -2,10 +2,12 @@ package com.backend.senior_backend.controllers;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.backend.senior_backend.dto.GroupNameWithBudget;
 import com.backend.senior_backend.dto.GroupWithRoleDTO;
 import com.backend.senior_backend.dto.budgetAndExpensesDTO;
 import com.backend.senior_backend.models.Groups;
 import com.backend.senior_backend.service.GroupsService;
+import com.backend.senior_backend.service.ParticipantsService;
 
 import jakarta.validation.Valid;
 
@@ -32,6 +34,9 @@ public class GroupsController {
 
     @Autowired
     private GroupsService groupsService;
+
+    @Autowired
+    private ParticipantsService participantsService;
 
     @PostMapping("/groups/add")
     public ResponseEntity<Groups> addGroup(@Valid @RequestBody Groups group, BindingResult bindingResult) {
@@ -77,6 +82,29 @@ public class GroupsController {
         return groupsService.getGroupBudgetAndExpenses(phone, groupId);
         
     }
+
+    @GetMapping("groups/delete/{groupId}")
+    public ResponseEntity<String> deleteGroup(@PathVariable Long groupId) {
+        String phone = SecurityContextHolder.getContext().getAuthentication().getName();
+        Boolean isLeader = participantsService.isGroupLeader(groupId, phone);
+        if (!isLeader) {
+            return ResponseEntity.status(403).body("❌ Only group leaders can delete groups!");
+        }
+        String response = groupsService.deleteGroup(groupId);
+        return ResponseEntity.ok(response);
+    }
+
+    // @PostMapping("/groups/update/{groupId}")
+    // public ResponseEntity<String> updateGroup(@PathVariable Long groupId, @RequestBody GroupNameWithBudget updatedGroup) {
+    //     String phone = SecurityContextHolder.getContext().getAuthentication().getName();
+    //     Boolean isLeader = participantsService.isGroupLeader(groupId, phone);
+    //     if (!isLeader) {
+    //         return ResponseEntity.status(403).body("❌ Only group leaders can update groups!");
+    //     }
+    //     String response = groupsService.updateGroup(groupId, updatedGroup);
+    //     return ResponseEntity.ok(response);
+    // }
+    
     
 
     

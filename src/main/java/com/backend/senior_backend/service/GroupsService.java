@@ -10,7 +10,9 @@ import org.springframework.validation.BindingResult;
 
 import com.backend.senior_backend.dto.GroupWithRoleDTO;
 import com.backend.senior_backend.dto.budgetAndExpensesDTO;
+import com.backend.senior_backend.models.Expenses;
 import com.backend.senior_backend.models.Groups;
+import com.backend.senior_backend.repositories.ExpenseRepository;
 import com.backend.senior_backend.repositories.GroupsRepository;
 import com.backend.senior_backend.repositories.ParticipantsRepository;
 
@@ -28,6 +30,9 @@ public class GroupsService {
 
     @Autowired
     private ExpensesService expensesService;
+
+    @Autowired
+    private ExpenseRepository expensesRepository;
     
     public Groups addGroup(Groups group, String phone, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -86,6 +91,13 @@ public class GroupsService {
         Double expenses = expensesService.getTotalExpensesAllUsers(groupId);
         budgetAndExpensesDTO budgetAndExpenses = new budgetAndExpensesDTO(budget, expenses);
         return budgetAndExpenses;
+    }
+
+    public String deleteGroup(Long groupId) {
+        groupsRepository.deleteById(groupId);
+        List<Expenses> expenses = expensesRepository.findAllByCategoryIdGroupId(groupId);
+        expensesRepository.deleteAll(expenses);
+        return "Group deleted successfully";
     }
 
 
