@@ -46,7 +46,17 @@ public class ParticipantsController {
     public ResponseEntity<?> getParticipants(@PathVariable("groupId") int groupId) {
         return ResponseEntity.ok(participantsService.findAllParticipantsWithRolesAndExpenses(groupId));
     }
+
+    @PostMapping("/deleteParticipant")
+    public ResponseEntity<String> removeParticipant(@RequestParam Long groupId, @RequestParam String participant_phone) {
     
-    
+        String phone = SecurityContextHolder.getContext().getAuthentication().getName();
+        Boolean isLeader = participantsService.isGroupLeader(groupId, phone);
+        if (!isLeader) {
+            return ResponseEntity.status(403).body("❌ Only group leaders can remove participants!");
+        }
+        String response = participantsService.removeParticipant(groupId, participant_phone);
+        return ResponseEntity.ok(response);
+    }
 
 }

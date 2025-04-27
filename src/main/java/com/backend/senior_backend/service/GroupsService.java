@@ -79,8 +79,8 @@ public class GroupsService {
 
     public budgetAndExpensesDTO getGroupBudgetAndExpenses(String phone, Long groupId) {
 
-        List<Long> groupIds = participantsRepository.findGroupIdsByUserPhone(phone);
-        Groups group = groupsRepository.findById(groupIds.get(0)).orElse(null);
+        Groups group = groupsRepository.findById(groupId).orElse(null);
+        System.out.println("group name:" + group.getName());
 
         int budget = group.getBudget();
         Double expenses = expensesService.getTotalExpensesAllUsers(groupId);

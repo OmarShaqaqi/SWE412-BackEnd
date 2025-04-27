@@ -25,11 +25,11 @@ public class Expenses {
     @Column(nullable = false)
     private String status;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "user_phone", nullable = false)
     private Users user;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumns({
         @JoinColumn(name = "group_id", referencedColumnName = "group_id"),
         @JoinColumn(name = "category_name", referencedColumnName = "name")

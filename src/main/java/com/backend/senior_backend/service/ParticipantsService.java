@@ -10,9 +10,11 @@ import org.springframework.stereotype.Service;
 import com.backend.senior_backend.dto.GroupWithRoleDTO;
 import com.backend.senior_backend.dto.ParticipantExpenseDTO;
 import com.backend.senior_backend.dto.ParticipantInformationDTO;
+import com.backend.senior_backend.repositories.ExpenseRepository;
 import com.backend.senior_backend.repositories.GroupsRepository;
 import com.backend.senior_backend.repositories.ParticipantsRepository;
 import com.backend.senior_backend.repositories.UsersRepository;
+import com.backend.senior_backend.models.Expenses;
 import com.backend.senior_backend.models.Groups;
 import com.backend.senior_backend.models.Participants;
 import com.backend.senior_backend.models.ParticipantsId;
@@ -32,6 +34,9 @@ public class ParticipantsService {
 
     @Autowired
     private ExpensesService expensesService;
+
+    @Autowired
+    private ExpenseRepository expensesRepository;
 
     public String addLeader(Long groupId, String phone, boolean isLeader) {
         if (isLeader) {
@@ -164,6 +169,26 @@ public class ParticipantsService {
                                             participant.getUser().getUsername(),
                                             expensesService.getTotalExpenses(groupId, phone));
     }
+
+    public String removeParticipant(Long groupId, String phone) {
+    // Find the participant record for this group and user
+    Participants participant = participantsRepository.findByGroupIdAndUserPhone(groupId, phone);
+    
+    if (participant == null) {
+        return "❌ Participant not found!";  // If no participant record exists, return null
+    }
+
+    // Delete all expenses related to this participant (assuming Expenses are linked by user_phone and group_id)
+    List<Expenses> expenses = expensesRepository.findByCategory_GroupIdAndUser_Phone(groupId, phone);
+    if (expenses != null && !expenses.isEmpty()) {
+        expensesRepository.deleteAll(expenses);  // Delete all the related expenses
+    }
+
+    // Delete the participant record
+    participantsRepository.delete(participant);
+    return "✅ Participant removed successfully!";
+}
+
 
    
 }
