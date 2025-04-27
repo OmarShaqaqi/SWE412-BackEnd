@@ -6,9 +6,8 @@ import java.util.Date;
 
 @Entity
 @Table(name = "Expense")
-@Getter
-@Setter
 @NoArgsConstructor
+@Data
 @AllArgsConstructor
 public class Expenses {
 
@@ -23,14 +22,19 @@ public class Expenses {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 
-    @ManyToOne
+    @Column(nullable = false)
+    private String status;
+
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "user_phone", nullable = false)
     private Users user;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumns({
         @JoinColumn(name = "group_id", referencedColumnName = "group_id"),
         @JoinColumn(name = "category_name", referencedColumnName = "name")
     })
     private Categories category;
+
+    private String description;
 }

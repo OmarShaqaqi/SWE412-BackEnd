@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import com.backend.senior_backend.service.UsersService;
 import jakarta.validation.Valid;
 import com.backend.senior_backend.dto.LoginRequestDTO;
+import com.backend.senior_backend.dto.UserBudegtDTO;
 import com.backend.senior_backend.models.Users;
 
 @RestController
@@ -22,9 +23,13 @@ public class UsersController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signUp(@Valid @RequestBody Users user, BindingResult bindingResult) {
+    public ResponseEntity<?> signUp(@Valid @RequestBody UserBudegtDTO user, BindingResult bindingResult) {
 
-        return usersService.newUser(user, bindingResult);
+        Users new_user = new Users(user.getPhone(), user.getEmail(), user.getPassword(), user.getUsername(),
+                user.getFname(), user.getLname());
+        Double budget = user.getBudget();
+
+        return usersService.newUser(new_user, budget, bindingResult);
 
     }
 
@@ -46,6 +51,11 @@ public class UsersController {
         return usersService.getProfile(phone);
     }
 
+    @GetMapping("/getUsers")
+    public ResponseEntity<?> getMethodName() {
+        return ResponseEntity.ok(usersService.getUsers());
+    }
+
     @PostMapping("/deleteuser")
     public ResponseEntity<?> deleteUser(@RequestBody Map<String, String> requestMap) {
         String phone = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -63,6 +73,12 @@ public class UsersController {
     public ResponseEntity<?> changePassword(@RequestBody Map<String, String> passwordMap) {
         String phone = SecurityContextHolder.getContext().getAuthentication().getName();
         return usersService.changePassword(phone, passwordMap);
+    }
+
+    @GetMapping("/isuseravailable/{username}")
+    public ResponseEntity<Boolean> isUserAvailable(@PathVariable String username) {
+        System.out.println("Username: " + username);
+        return ResponseEntity.ok(usersService.isUserAvailable(username));
     }
 
     @PostMapping("/signout")

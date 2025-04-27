@@ -15,6 +15,7 @@ import lombok.*;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
 public class Users implements UserDetails {
     
@@ -38,14 +39,6 @@ public class Users implements UserDetails {
     @Column(length = 30, nullable = false)
     private String lname;
 
-    public Users(String phone, String fname, String lname, String email, String username, String password) {
-        this.phone = phone;
-        this.fname = fname;
-        this.lname = lname;
-        this.email = email;
-        this.username = username;
-        this.password = password;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -4,6 +4,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
+
+import com.backend.senior_backend.models.Groups;
 import com.backend.senior_backend.models.Users;
 import com.backend.senior_backend.repositories.UsersRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,13 +27,16 @@ public class UsersService {
     @Autowired
     private JWTService jwtService;
 
+    @Autowired
+    private GroupsService groupsService;
+
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
 
     public List<Users> getAllUsers() {
         return usersRepository.findAll();
     }
 
-    public ResponseEntity<?> newUser(Users user, BindingResult bindingResult) {
+    public ResponseEntity<?> newUser(Users user, Double budget, BindingResult bindingResult) {
         Map<String, Object> errors = new HashMap<>();
         if (bindingResult.hasErrors()) { // check if there are errors
             bindingResult.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
@@ -53,6 +58,12 @@ public class UsersService {
 
         user.setPassword(encoder.encode(user.getPassword()));
         usersRepository.save(user); // save user
+
+        Groups group = new Groups();
+        group.setBudget(budget.intValue());
+        group.setName("personal");
+
+        groupsService.addGroup(group, user.getPhone(), bindingResult);
 
         return ResponseEntity.ok(Map.of("status", 200));
     }
@@ -76,6 +87,10 @@ public class UsersService {
         response.put("token", token);
         return response;
 
+    }
+
+    public List<Users> getUsers() {
+        return usersRepository.findAll();
     }
 
     public ResponseEntity<?> getProfile(String phone) {
@@ -164,5 +179,13 @@ public class UsersService {
     public String signOut(String token) {
         jwtService.invalidateToken(token);
         return "✅ User signed out successfully!";
+    }
+
+    public Boolean isUserAvailable(String username) {
+
+        if (usersRepository.findByUsername(username).isPresent()) {
+            return true;
+        }
+        return false;
     }
 }
