@@ -83,7 +83,7 @@ public class GroupsController {
         
     }
 
-    @GetMapping("groups/delete/{groupId}")
+    @GetMapping("/groups/delete/{groupId}")
     public ResponseEntity<String> deleteGroup(@PathVariable Long groupId) {
         String phone = SecurityContextHolder.getContext().getAuthentication().getName();
         Boolean isLeader = participantsService.isGroupLeader(groupId, phone);
