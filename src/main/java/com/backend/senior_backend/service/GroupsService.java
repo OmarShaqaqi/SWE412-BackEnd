@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
+import com.backend.senior_backend.dto.GroupNameWithBudget;
 import com.backend.senior_backend.dto.GroupWithRoleDTO;
 import com.backend.senior_backend.dto.budgetAndExpensesDTO;
 import com.backend.senior_backend.models.Expenses;
@@ -99,6 +100,25 @@ public class GroupsService {
         expensesRepository.deleteAll(expenses);
         return "Group deleted successfully";
     }
+
+    public String updateGroup(Long groupId, GroupNameWithBudget updatedGroup) {
+        Groups group = groupsRepository.findById(groupId).orElse(null);
+        if (group == null) {
+            return "Group not found"; // Handle the case when the group doesn't exist
+        }
+    
+        // Only update if the value is not null
+        if (updatedGroup.getGroupName() != null) {
+            group.setName(updatedGroup.getGroupName());
+        }
+        if (updatedGroup.getBudget() != null) {
+            group.setBudget(updatedGroup.getBudget());
+        }
+    
+        groupsRepository.save(group);
+        return "Group updated successfully";
+    }
+    
 
 
     

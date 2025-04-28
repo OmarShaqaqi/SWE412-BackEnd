@@ -5,6 +5,6 @@ package com.backend.senior_backend.dto;
 @lombok.AllArgsConstructor
 public class GroupNameWithBudget {
     private String groupName;
-    private double budget;
+    private Integer budget;
 
 }

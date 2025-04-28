@@ -94,16 +94,16 @@ public class GroupsController {
         return ResponseEntity.ok(response);
     }
 
-    // @PostMapping("/groups/update/{groupId}")
-    // public ResponseEntity<String> updateGroup(@PathVariable Long groupId, @RequestBody GroupNameWithBudget updatedGroup) {
-    //     String phone = SecurityContextHolder.getContext().getAuthentication().getName();
-    //     Boolean isLeader = participantsService.isGroupLeader(groupId, phone);
-    //     if (!isLeader) {
-    //         return ResponseEntity.status(403).body("❌ Only group leaders can update groups!");
-    //     }
-    //     String response = groupsService.updateGroup(groupId, updatedGroup);
-    //     return ResponseEntity.ok(response);
-    // }
+    @PostMapping("/groups/update/{groupId}")
+    public ResponseEntity<String> updateGroup(@PathVariable Long groupId, @RequestBody GroupNameWithBudget updatedGroup) {
+        String phone = SecurityContextHolder.getContext().getAuthentication().getName();
+        Boolean isLeader = participantsService.isGroupLeader(groupId, phone);
+        if (!isLeader) {
+            return ResponseEntity.status(403).body("❌ Only group leaders can update groups!");
+        }
+        String response = groupsService.updateGroup(groupId, updatedGroup);
+        return ResponseEntity.ok(response);
+    }
     
     
 
