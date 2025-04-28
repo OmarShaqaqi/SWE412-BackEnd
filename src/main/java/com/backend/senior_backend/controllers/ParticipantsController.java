@@ -59,4 +59,14 @@ public class ParticipantsController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("deleteMe")
+    public ResponseEntity<String> removeMe(@RequestParam Long groupId) {
+    
+        String phone = SecurityContextHolder.getContext().getAuthentication().getName();
+        
+        String response = participantsService.removeParticipant(groupId, phone);
+        return ResponseEntity.ok(response);
+    }
+    
+
 }
