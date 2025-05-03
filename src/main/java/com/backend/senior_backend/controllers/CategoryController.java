@@ -50,7 +50,8 @@ public class CategoryController {
         List<CategoryResponseDTO> response = categories.stream()
             .map(category -> new CategoryResponseDTO(
                 category.getId().getGroupId(),
-                category.getId().getName()
+                category.getId().getName(),
+                category.getIconName()
             ))
             .collect(Collectors.toList());
 
