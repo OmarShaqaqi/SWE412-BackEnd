@@ -53,10 +53,15 @@ public class CategoryController {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/delete")
+    @GetMapping("/delete")
     public ResponseEntity<String> deleteCategory(@RequestParam Long groupId, @RequestParam String categoryName) {
         String phone = SecurityContextHolder.getContext().getAuthentication().getName();
-        String response = categoryService.deleteCategory(groupId, categoryName, phone);
+        Boolean isLeader = participantsService.isGroupLeader(groupId, phone);
+        if (!isLeader) {
+            return ResponseEntity.status(403).body("❌ Only group leaders can delete groups!");
+        }
+        String response = categoryService.deleteCategory(groupId, categoryName);
         return ResponseEntity.ok(response);
     }
+
 }

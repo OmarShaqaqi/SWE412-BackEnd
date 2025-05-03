@@ -1,5 +1,6 @@
 package com.backend.senior_backend.service;
 
+import com.backend.senior_backend.dto.ExpensesResponse;
 import com.backend.senior_backend.models.*;
 import com.backend.senior_backend.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ public class CategoriesService {
 
     @Autowired
     private ParticipantsRepository participantsRepository;
+
+    @Autowired
+    private ExpenseRepository expenseRepository;
 
     // public String addCategory(Long groupId, String categoryName, String userPhone) {
     //     Optional<Groups> groupOpt = groupsRepository.findById(groupId);
@@ -60,18 +64,25 @@ public class CategoriesService {
         return categoriesRepository.findAllByGroupId(groupId);
     }
 
-    public String deleteCategory(Long groupId, String categoryName, String userPhone) {
-        Optional<Participants> participantOpt = participantsRepository.findById(new ParticipantsId(groupId, userPhone));
-        if (participantOpt.isEmpty() || !participantOpt.get().isLeader()) {
-            return "❌ Only group leaders can delete categories!";
-        }
+    public String deleteCategory(Long groupId, String categoryName) {
+
+
+    Optional<Categories> category = categoriesRepository.findById(new CategoriesId(groupId,categoryName));
+
+    if (category == null){
+        return "category is not available";
+    }
+
+    List<Expenses> expenses = expenseRepository.findAllByCategoryId(new CategoriesId(groupId,categoryName));
+
+    if (!expenses.isEmpty()) {
+        expenseRepository.deleteAll(expenses);
+    }
+
+    category.ifPresent(categoriesRepository::delete);
+
+    return "category was deleted successfully";
         
-        CategoriesId categoriesId = new CategoriesId(groupId, categoryName);
-        Optional<Categories> categoryOpt = categoriesRepository.findById(categoriesId);
-        if (categoryOpt.isEmpty()) {
-            return "❌ Category not found!";
-        }
-        categoriesRepository.delete(categoryOpt.get());
-        return "✅ Category deleted successfully!";
+        
     }
 }

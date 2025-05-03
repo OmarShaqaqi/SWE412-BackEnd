@@ -43,8 +43,6 @@ public class GroupsController {
     @PostMapping("/add")
     public ResponseEntity<Groups> addGroup(@Valid @RequestBody Groups group, BindingResult bindingResult) {
         String phone = SecurityContextHolder.getContext().getAuthentication().getName();
-        System.out.println("This is the binding results");
-        System.out.println(bindingResult);
 
         final Groups new_group = groupsService.addGroup(group,phone,bindingResult);
 
@@ -106,11 +104,6 @@ public class GroupsController {
         String response = groupsService.updateGroup(groupId, updatedGroup);
         return ResponseEntity.ok(response);
     }
-    
-    
-
-    
-    
     
     
 }

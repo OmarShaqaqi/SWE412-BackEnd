@@ -66,6 +66,7 @@ public class UsersService {
         Groups group = new Groups();
         group.setBudget(budget.intValue());
         group.setName("personal");
+        group.setIconName("Wallet");
 
         groupsService.addGroup(group, user.getPhone(), bindingResult);
 

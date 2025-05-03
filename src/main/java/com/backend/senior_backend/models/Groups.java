@@ -23,4 +23,7 @@ public class Groups {
     @NotNull(message = "Budget is required")
     private int budget;
 
+    @Column(nullable = false)
+    private String iconName;
+
 }
