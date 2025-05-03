@@ -46,7 +46,7 @@ public class CategoriesService {
     //     categoriesRepository.save(category);
     //     return "✅ Category added successfully!";
     // }
-    public String addCategory(Long groupId, String categoryName) {
+    public String addCategory(Long groupId, String categoryName, String iconName) {
         Optional<Groups> groupOpt = groupsRepository.findById(groupId);
         if (groupOpt.isEmpty()) {
             return "❌ Group not found!";
@@ -56,6 +56,7 @@ public class CategoriesService {
         Categories category = new Categories();
         category.setId(categoriesId);
         category.setGroup(groupOpt.get());
+        category.setIconName(iconName);
 
         categoriesRepository.save(category);
         return "✅ Category added successfully!";

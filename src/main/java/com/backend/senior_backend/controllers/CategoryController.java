@@ -38,7 +38,7 @@ public class CategoryController {
         }
 
         // Ensure only two arguments are passed
-        String response = categoryService.addCategory(request.getGroupId(), request.getCategoryName());
+        String response = categoryService.addCategory(request.getGroupId(), request.getCategoryName(), request.getIconName());
         return ResponseEntity.ok(response);
     }
 
