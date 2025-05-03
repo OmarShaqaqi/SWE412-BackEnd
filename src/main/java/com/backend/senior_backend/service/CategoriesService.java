@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.StringCharacterIterator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -83,6 +84,23 @@ public class CategoriesService {
 
     return "category was deleted successfully";
         
+        
+    }
+
+    public String modifyCategory(Long groupId, String categoryName, String newCategoryName) {
+
+        Optional<Categories> category = categoriesRepository.findById(new CategoriesId(groupId,categoryName));
+        if (category == null){
+            return "category is not available";
+        }
+        category.ifPresent(c -> {
+            c.setId(new CategoriesId(groupId,newCategoryName));  // Set the new category name
+            categoriesRepository.save(c);  // Save the updated entity
+        });
+
+        return "Category name was changed";
+
+
         
     }
 }

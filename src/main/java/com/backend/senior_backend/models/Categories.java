@@ -17,5 +17,8 @@ public class Categories {
     @JoinColumn(name = "group_id", nullable = false)
     private Groups group;
 
+    @Column(nullable = false)
+    private String iconName;
+
     
 }
