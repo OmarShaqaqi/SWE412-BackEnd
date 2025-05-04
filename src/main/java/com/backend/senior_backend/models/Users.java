@@ -39,10 +39,24 @@ public class Users implements UserDetails {
     @Column(length = 30, nullable = false)
     private String lname;
 
+    @Lob
+    @Column(name = "profile_picture")
+    private byte[] profilePicture;  
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
+    }
+
+
+    public Users(String phone2, String email2, String password2, String username2, String fname2, String lname2) {
+        this.phone = phone2;
+        this.email = email2;
+        this.password = password2;
+        this.username = username2;
+        this.fname = fname2;
+        this.lname =lname2;
     }
 
 }

@@ -1,16 +1,27 @@
 package com.backend.senior_backend.controllers;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
+
+import org.springframework.http.HttpHeaders;
 import java.util.Map;
+
+import org.springframework.http.MediaType;
 import org.springframework.http.HttpStatus;
 import com.backend.senior_backend.service.UsersService;
 import jakarta.validation.Valid;
 import com.backend.senior_backend.dto.LoginRequestDTO;
 import com.backend.senior_backend.dto.UserBudegtDTO;
 import com.backend.senior_backend.models.Users;
+
+import org.springframework.web.bind.annotation.*;
+import org.springframework.http.*;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.beans.factory.annotation.Autowired;
+
 
 
 @RestController
@@ -82,6 +93,34 @@ public class UsersController {
         System.out.println("Username: " + username);
         return ResponseEntity.ok(usersService.isUserAvailable(username));
     }
+
+    @PostMapping("/uploadProfilePicture")
+    public ResponseEntity<String> getProfilePicture(@RequestParam("file") MultipartFile file)  {
+        String phone = SecurityContextHolder.getContext().getAuthentication().getName();
+        String response = usersService.saveUserProfilePicture(phone,file);
+
+        return ResponseEntity.ok(response);
+    }
+    @GetMapping("/getProfilePicture")
+    public ResponseEntity<byte[]> getProfilePicture() {
+        String phone = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        byte[] profilePicture = usersService.getProfilePicture(phone);
+
+        // If the profile picture doesn't exist, return 404
+        if (profilePicture == null || profilePicture.length == 0) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        // Determine the content type (you can dynamically detect the image type if needed)
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_JPEG);  // Or use MediaType.IMAGE_PNG for PNG files
+
+        // Return the profile picture as byte array with the appropriate content type
+        return new ResponseEntity<>(profilePicture, headers, HttpStatus.OK);
+    }
+    
+
 
     @PostMapping("/signout")
     public ResponseEntity<?> signOut(@RequestHeader("Authorization") String token) {

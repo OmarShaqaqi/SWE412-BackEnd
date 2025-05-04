@@ -4,11 +4,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.backend.senior_backend.models.Groups;
 import com.backend.senior_backend.models.Users;
 import com.backend.senior_backend.repositories.UsersRepository;
 import lombok.RequiredArgsConstructor;
+
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -196,6 +199,47 @@ public class UsersService {
             return true;
         }
         return false;
+    }
+
+    public String saveUserProfilePicture(String phone, MultipartFile file){
+            Optional<Users> user = usersRepository.findById(phone);
+
+        if (user == null) {
+            return "user not found";
+        }
+
+        // Convert the uploaded file to a byte array and set it as the profile picture
+        user.ifPresent(u ->{
+            try {
+                u.setProfilePicture(file.getBytes());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            usersRepository.save(u);  // Save the user with the new profile picture
+        });
+
+        return "profile picture was saved";
+    }
+
+    public byte[] getProfilePicture(String phone){
+        Optional<Users> userOptional = usersRepository.findById(phone);
+
+        if (userOptional.isEmpty()) {
+            return null;
+        }
+
+        // Get the profile picture (byte array) from the user object
+        Users user = userOptional.get();
+        byte[] profilePicture = user.getProfilePicture();
+
+        // If there is no profile picture, return a 404
+        if (profilePicture == null || profilePicture.length == 0) {
+            return null;
+        }
+
+        // Set the appropriate content type (e.g., image/jpeg, image/png)
+       return profilePicture;
+
     }
 } 
 
