@@ -29,7 +29,7 @@ public class Expenses {
     @JoinColumn(name = "user_phone", nullable = false)
     private Users user;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     @JoinColumns({
         @JoinColumn(name = "group_id", referencedColumnName = "group_id"),
         @JoinColumn(name = "category_name", referencedColumnName = "name")
