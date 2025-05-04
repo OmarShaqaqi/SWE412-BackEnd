@@ -9,6 +9,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.backend.senior_backend.models.Groups;
 import com.backend.senior_backend.models.Users;
 import com.backend.senior_backend.repositories.UsersRepository;
+
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
@@ -76,6 +78,7 @@ public class UsersService {
         return ResponseEntity.ok(Map.of("status", 200));
     }
 
+    @Transactional
     public Map<String, String> loginUser(LoginRequestDTO request) {
         Map<String, String> response = new HashMap<>();
         Optional<Users> userOptional = usersRepository.findByPhone(request.getPhone());
@@ -97,11 +100,11 @@ public class UsersService {
         return response;
        
     }
-
+    @Transactional
     public List<Users> getUsers(){
         return usersRepository.findAll();
     }
-
+    @Transactional
     public ResponseEntity<?> getProfile(String phone) {
 
 
@@ -124,7 +127,7 @@ public class UsersService {
 
         return ResponseEntity.ok(response);
     }
-
+    @Transactional
     public ResponseEntity<?> deleteUser(String phone, String password) {
 
         if (phone == null || phone.equals("anonymousUser")) {
@@ -145,7 +148,7 @@ public class UsersService {
         return ResponseEntity.ok("✅ User deleted successfully!");
     }
     
-
+    @Transactional
     public ResponseEntity<?> changePassword(String phone, Map<String, String> passwordMap) {
 
         if (phone == null || phone.equals("anonymousUser")) {
@@ -164,7 +167,7 @@ public class UsersService {
 
         return ResponseEntity.ok("✅ Password changed successfully!: "+newPassword);
     }
-
+    @Transactional
     public ResponseEntity<?> updateUserDetails(String phone, Map<String, String> userDetailsMap) {
     
         if (phone == null || phone.equals("anonymousUser")) {
@@ -187,7 +190,7 @@ public class UsersService {
         usersRepository.save(userDetails);
         return ResponseEntity.ok("✅ User details updated successfully!");
     }
-
+    @Transactional
     public String signOut(String token) {
         jwtService.invalidateToken(token);
         return "✅ User signed out successfully!";
@@ -200,7 +203,7 @@ public class UsersService {
         }
         return false;
     }
-
+    @Transactional
     public String saveUserProfilePicture(String phone, MultipartFile file){
             Optional<Users> user = usersRepository.findById(phone);
 
@@ -220,7 +223,7 @@ public class UsersService {
 
         return "profile picture was saved";
     }
-
+    @Transactional
     public byte[] getProfilePicture(String phone){
         Optional<Users> userOptional = usersRepository.findById(phone);
 

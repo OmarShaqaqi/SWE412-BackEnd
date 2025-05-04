@@ -61,7 +61,7 @@ public class UsersController {
         String phone = SecurityContextHolder.getContext().getAuthentication().getName();
 
         return usersService.getProfile(phone);
-    }
+    } 
 
     @GetMapping("/getUsers")
     public ResponseEntity<?> getMethodName() {
