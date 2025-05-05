@@ -11,7 +11,10 @@ import java.util.List;
 @RestController
 @CrossOrigin
 @RequestMapping("/complains")
+
 public class ComplainsController {
+    // Service to handle complaints-related operations
+
 
     @Autowired
     private ComplainsService complainsService;
