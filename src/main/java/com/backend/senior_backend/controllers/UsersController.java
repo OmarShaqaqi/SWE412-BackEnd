@@ -96,4 +96,10 @@ public class UsersController {
         return ResponseEntity.ok(usersService.getAllUsers());
     }
 
+    @GetMapping("/usersCount")
+    public ResponseEntity<Long> getUsersCount() {
+        Long count = usersService.getUsersCount();
+        return ResponseEntity.ok(count);
+    }
+
 }

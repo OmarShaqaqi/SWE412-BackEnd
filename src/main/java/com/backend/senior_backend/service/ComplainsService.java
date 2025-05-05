@@ -31,4 +31,18 @@ public class ComplainsService {
             throw new RuntimeException("Complaint with ID " + id + " not found.");
         }
     }
+
+    // Update a complaint by ID
+    public Complian updateComplianStatus(Long id) {
+        if (complianRepository.existsById(id)) {
+            Complian existingComplian = complianRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Complaint not found"));
+            // Toggle the status
+            existingComplian.setStatus(!existingComplian.isStatus());
+            return complianRepository.save(existingComplian);
+        } else {
+            throw new RuntimeException("Complaint with ID " + id + " not found.");
+
+        }
+    }
 }

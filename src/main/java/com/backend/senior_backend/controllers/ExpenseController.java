@@ -9,6 +9,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +28,7 @@ import com.backend.senior_backend.service.ExpensesService;
 import com.backend.senior_backend.service.ExpensesService.TimeGroup;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/expenses")
 public class ExpenseController {
 
@@ -35,15 +37,17 @@ public class ExpenseController {
 
     // @PostMapping("/add")
     // public ResponseEntity<String> addExpense(
-    //         @RequestParam Long groupId,
-    //         @RequestParam String categoryName,
-    //         @RequestParam BigDecimal amount,
-    //         @RequestParam String description) {
-        
-    //     String phone = SecurityContextHolder.getContext().getAuthentication().getName();
-    //     java.sql.Date sqlDate = new java.sql.Date(new Date().getTime());
-    //     String response = expenseService.addExpense(groupId, categoryName, phone, amount, sqlDate, description);
-    //     return ResponseEntity.ok(response);
+    // @RequestParam Long groupId,
+    // @RequestParam String categoryName,
+    // @RequestParam BigDecimal amount,
+    // @RequestParam String description) {
+
+    // String phone =
+    // SecurityContextHolder.getContext().getAuthentication().getName();
+    // java.sql.Date sqlDate = new java.sql.Date(new Date().getTime());
+    // String response = expenseService.addExpense(groupId, categoryName, phone,
+    // amount, sqlDate, description);
+    // return ResponseEntity.ok(response);
     // }
     @PostMapping("/add")
     public ResponseEntity<String> addExpense(@RequestBody ExpenseRequest request) {
@@ -53,16 +57,21 @@ public class ExpenseController {
                 request.getCategoryName(),
                 phone,
                 request.getAmount(),
-                request.getDate() == null ?  new java.sql.Date(new Date().getTime()) : request.getDate(),
-                
-                request.getDescription()
-        );
+                request.getDate() == null ? new java.sql.Date(new Date().getTime()) : request.getDate(),
+
+                request.getDescription());
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/list")
     public ResponseEntity<List<Expenses>> getExpenses(@RequestParam Long groupId, @RequestParam String categoryName) {
         List<Expenses> expenses = expenseService.getExpenses(groupId, categoryName);
+        return ResponseEntity.ok(expenses);
+    }
+
+    @GetMapping("/getAll")
+    public ResponseEntity<List<Expenses>> getAllExpenses() {
+        List<Expenses> expenses = expenseService.getAllExpenses();
         return ResponseEntity.ok(expenses);
     }
 
@@ -78,15 +87,14 @@ public class ExpenseController {
         return ResponseEntity.ok(response);
     }
 
-     // ✅ Approve an expense
+    // ✅ Approve an expense
     @PostMapping("/approve")
     public ResponseEntity<String> approveExpense(@RequestParam Long expenseId) {
         System.out.println("Expense ID: " + expenseId);
         String leaderPhone = SecurityContextHolder.getContext().getAuthentication().getName();
         boolean success = expenseService.updateExpenseStatus(expenseId, "APPROVED", leaderPhone);
 
-        return success ? ResponseEntity.ok("Expense approved") :
-                ResponseEntity.badRequest().body("Approval failed");
+        return success ? ResponseEntity.ok("Expense approved") : ResponseEntity.badRequest().body("Approval failed");
     }
 
     // ✅ Reject an expense
@@ -95,17 +103,15 @@ public class ExpenseController {
         String leaderPhone = SecurityContextHolder.getContext().getAuthentication().getName();
         boolean success = expenseService.updateExpenseStatus(expenseId, "REJECTED", leaderPhone);
 
-        return success ? ResponseEntity.ok("Expense rejected") :
-                ResponseEntity.badRequest().body("Rejection failed");
+        return success ? ResponseEntity.ok("Expense rejected") : ResponseEntity.badRequest().body("Rejection failed");
     }
 
     @GetMapping("/{filter}")
-    public Map<String,BigDecimal> getExpensesByPeriod(@PathVariable String filter) {
+    public Map<String, BigDecimal> getExpensesByPeriod(@PathVariable String filter) {
 
         String phone = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        return expenseService.getUserExpenses(phone,filter);
-
+        return expenseService.getUserExpenses(phone, filter);
 
     }
 
@@ -118,14 +124,19 @@ public class ExpenseController {
     }
 
     @GetMapping("/date/{calendar}")
-    public List<ExpensesDetails> getMethodName(@PathVariable String calendar ) {
+    public List<ExpensesDetails> getMethodName(@PathVariable String calendar) {
         String phone = SecurityContextHolder.getContext().getAuthentication().getName();
         return expenseService.getExpensesByDate(calendar, phone);
     }
 
-   
-    
-    
-    
-    
+    @GetMapping("/transactionSum")
+    public BigDecimal getTotalTransactionsSum() {
+        return expenseService.getTotalTransactionsSum();
+    }
+
+    @GetMapping("/transactionsCount")
+    public Long getTotalTransactionsNumber() {
+        return expenseService.getTotalTransactionsCount();
+    }
+
 }

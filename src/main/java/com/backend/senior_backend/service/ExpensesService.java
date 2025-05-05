@@ -46,7 +46,8 @@ public class ExpensesService {
     @Autowired
     private ParticipantsRepository participantsRepository;
 
-    public String addExpense(Long groupId, String categoryName, String userPhone, BigDecimal amount, Date date, String description) {
+    public String addExpense(Long groupId, String categoryName, String userPhone, BigDecimal amount, Date date,
+            String description) {
         Optional<Users> userOpt = usersRepository.findByPhone(userPhone);
         if (userOpt.isEmpty()) {
             return "❌ User not found!";
@@ -77,28 +78,28 @@ public class ExpensesService {
     public double getTotalExpenses(Long groupId, String phone) {
 
         List<Expenses> expensesList = expensesRepository.findByCategory_GroupIdAndUser_Phone(groupId, phone);
-        
+
         // Calculate the total amount
         BigDecimal totalAmount = expensesList.stream()
-            .map(Expenses::getAmount) // Extract the amount from each expense
-            .reduce(BigDecimal.ZERO, BigDecimal::add); // Sum up the amounts
+                .map(Expenses::getAmount) // Extract the amount from each expense
+                .reduce(BigDecimal.ZERO, BigDecimal::add); // Sum up the amounts
 
         // Return the total amount as a double
         return totalAmount.doubleValue();
     }
+
     public double getTotalExpensesAllUsers(Long groupId) {
 
         List<Expenses> expensesList = expensesRepository.findByCategory_GroupId(groupId);
-        
+
         // Calculate the total amount
         BigDecimal totalAmount = expensesList.stream()
-            .map(Expenses::getAmount) // Extract the amount from each expense
-            .reduce(BigDecimal.ZERO, BigDecimal::add); // Sum up the amounts
+                .map(Expenses::getAmount) // Extract the amount from each expense
+                .reduce(BigDecimal.ZERO, BigDecimal::add); // Sum up the amounts
 
         // Return the total amount as a double
         return totalAmount.doubleValue();
     }
-    
 
     public String deleteExpense(Long expenseId) {
         Optional<Expenses> expenseOpt = expensesRepository.findById(expenseId);
@@ -113,16 +114,15 @@ public class ExpensesService {
         List<Expenses> expenses = expensesRepository.findAllByCategoryIdGroupId(groupId);
         // Map the Expenses entities to the ExpensesResponse DTO
         List<ExpensesDetails> response = expenses.stream()
-            .map(e -> new  ExpensesDetails(
-                e.getId(),
-                e.getDate(),
-                e.getAmount(),
-                e.getCategory().getId().getName(),
-                e.getUser().getUsername(),
-                e.getStatus(),
-                e.getDescription()
-            ))
-            .collect(Collectors.toList());
+                .map(e -> new ExpensesDetails(
+                        e.getId(),
+                        e.getDate(),
+                        e.getAmount(),
+                        e.getCategory().getId().getName(),
+                        e.getUser().getUsername(),
+                        e.getStatus(),
+                        e.getDescription()))
+                .collect(Collectors.toList());
 
         return response;
     }
@@ -149,55 +149,49 @@ public class ExpensesService {
         TimeGroup groupBy = parseTimeGroup(filter);
         return getUserExpensesGroupedBy(expenses, groupBy);
 
-
     }
-
 
     public Map<String, BigDecimal> getUserExpensesGroupedBy(List<Expenses> expenses, TimeGroup groupBy) {
         if (expenses == null || expenses.isEmpty()) {
             System.out.println("⚠️ No expenses provided.");
             return Map.of();
         }
-    
+
         return expenses.stream()
-            .filter(e -> e != null && e.getDate() != null)
-            .collect(Collectors.groupingBy(
-                e -> {
-                    Date date = e.getDate();
-                    LocalDate localDate;
-    
-                    if (date instanceof java.sql.Date sqlDate) {
-                        localDate = sqlDate.toLocalDate();
-                    } else {
-                        localDate = date.toInstant()
+                .filter(e -> e != null && e.getDate() != null)
+                .collect(Collectors.groupingBy(
+                        e -> {
+                            Date date = e.getDate();
+                            LocalDate localDate;
+
+                            if (date instanceof java.sql.Date sqlDate) {
+                                localDate = sqlDate.toLocalDate();
+                            } else {
+                                localDate = date.toInstant()
                                         .atZone(ZoneId.systemDefault())
                                         .toLocalDate();
-                    }
-    
-                    return switch (groupBy) {
-                        case DAY -> localDate.toString();
-                        case MONTH -> localDate.getYear() + "-" + String.format("%02d", localDate.getMonthValue());
-                        case YEAR -> String.valueOf(localDate.getYear());
-                    };
-                },
-                Collectors.mapping(
-                    Expenses::getAmount,
-                    Collectors.reducing(BigDecimal.ZERO, BigDecimal::add)
-                )
-            ));
+                            }
+
+                            return switch (groupBy) {
+                                case DAY -> localDate.toString();
+                                case MONTH ->
+                                    localDate.getYear() + "-" + String.format("%02d", localDate.getMonthValue());
+                                case YEAR -> String.valueOf(localDate.getYear());
+                            };
+                        },
+                        Collectors.mapping(
+                                Expenses::getAmount,
+                                Collectors.reducing(BigDecimal.ZERO, BigDecimal::add))));
     }
-    
-    
 
     public TimeGroup parseTimeGroup(String input) {
         try {
             return TimeGroup.valueOf(input.trim().toUpperCase());
         } catch (IllegalArgumentException | NullPointerException e) {
             throw new IllegalArgumentException("Invalid time group: " + input +
-                ". Valid values are: DAY, MONTH, YEAR");
+                    ". Valid values are: DAY, MONTH, YEAR");
         }
     }
-
 
     public List<ExpensesSummaryDTO> getTodaysExpenses(String phone) {
         Date today = new Date();
@@ -211,10 +205,9 @@ public class ExpensesService {
 
         return allExpenses.stream()
                 .map(e -> new ExpensesSummaryDTO(
-                    e.getDate(),
-                    e.getAmount(),
-                    e.getCategory().getId().getName()
-                ))
+                        e.getDate(),
+                        e.getAmount(),
+                        e.getCategory().getId().getName()))
                 .collect(Collectors.toList());
 
     }
@@ -225,44 +218,52 @@ public class ExpensesService {
             return null;
         }
         return new ExpensesDetails(
-            expense.getId(),
-            expense.getDate(),
-            expense.getAmount(),
-            expense.getCategory().getId().getName(),
-            expense.getUser().getUsername(),
-            expense.getStatus(),
-            expense.getDescription()
-        );
+                expense.getId(),
+                expense.getDate(),
+                expense.getAmount(),
+                expense.getCategory().getId().getName(),
+                expense.getUser().getUsername(),
+                expense.getStatus(),
+                expense.getDescription());
     }
 
     public List<ExpensesDetails> getExpensesByDate(String date, String phone) {
-        
+
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Date new_date ;
+        Date new_date;
         try {
             new_date = formatter.parse(date);
             List<Expenses> expenses = expensesRepository.findAllByUser_PhoneAndDate(phone, new_date);
             return expenses.stream()
-            .map(e -> new ExpensesDetails(
-                e.getId(),
-                e.getDate(),
-                e.getAmount(),
-                e.getCategory().getId().getName(),
-                e.getUser().getUsername(),
-                e.getStatus(),
-                e.getDescription()
-            ))
-            .collect(Collectors.toList());
+                    .map(e -> new ExpensesDetails(
+                            e.getId(),
+                            e.getDate(),
+                            e.getAmount(),
+                            e.getCategory().getId().getName(),
+                            e.getUser().getUsername(),
+                            e.getStatus(),
+                            e.getDescription()))
+                    .collect(Collectors.toList());
         } catch (ParseException e) {
             e.printStackTrace();
             return null;
         }
-        
-       
 
-    
-        
     }
-    
+
+    public BigDecimal getTotalTransactionsSum() {
+        List<Expenses> allExpenses = expensesRepository.findAll();
+        return allExpenses.stream()
+                .map(Expenses::getAmount) // Extract the amount from each expense
+                .reduce(BigDecimal.ZERO, BigDecimal::add); // Sum up the amounts
+    }
+
+    public long getTotalTransactionsCount() {
+        return expensesRepository.count();
+    }
+
+    public List<Expenses> getAllExpenses() {
+        return expensesRepository.findAll();
+    }
 
 }

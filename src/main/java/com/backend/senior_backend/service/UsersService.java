@@ -36,6 +36,10 @@ public class UsersService {
         return usersRepository.findAll();
     }
 
+    public Long getUsersCount() {
+        return usersRepository.count();
+    }
+
     public ResponseEntity<?> newUser(Users user, Double budget, BindingResult bindingResult) {
         Map<String, Object> errors = new HashMap<>();
         if (bindingResult.hasErrors()) { // check if there are errors
@@ -69,6 +73,28 @@ public class UsersService {
     }
 
     public Map<String, String> loginUser(LoginRequestDTO request) {
+        Map<String, String> response = new HashMap<>();
+        Optional<Users> userOptional = usersRepository.findByPhone(request.getPhone());
+
+        if (userOptional.isEmpty()) {
+            response.put("error", "User not found!");
+            return response;
+        }
+
+        Users user = userOptional.get();
+        if (!encoder.matches(request.getPassword(), user.getPassword())) {
+            response.put("error", "Invalid password!");
+            return response;
+        }
+
+        String token = jwtService.generateToken(user.getPhone());
+        response.put("token", token);
+        return response;
+
+    }
+
+    // admin login
+    public Map<String, String> loginAdmin(LoginRequestDTO request) {
         Map<String, String> response = new HashMap<>();
         Optional<Users> userOptional = usersRepository.findByPhone(request.getPhone());
 

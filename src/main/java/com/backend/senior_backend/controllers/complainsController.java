@@ -10,8 +10,8 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/api/complains")
-public class complainsController {
+@RequestMapping("/complains")
+public class ComplainsController {
 
     @Autowired
     private ComplainsService complainsService;
@@ -31,13 +31,25 @@ public class complainsController {
     }
 
     // Endpoint to delete a complaint by ID
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delet/{id}")
     public ResponseEntity<String> deleteComplian(@PathVariable Long id) {
         try {
             complainsService.deleteComplianById(id);
             return ResponseEntity.ok("Complaint with ID " + id + " deleted successfully.");
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body(e.getMessage());
+        }
+    }
+
+    // Endpoint to update a complaint by ID
+    @PutMapping("/update/{id}")
+
+    public ResponseEntity<Complian> updateComplian(@PathVariable Long id, @RequestBody Complian complian) {
+        try {
+            Complian updatedComplian = complainsService.updateComplianStatus(id);
+            return ResponseEntity.ok(updatedComplian);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(null);
         }
     }
 }
