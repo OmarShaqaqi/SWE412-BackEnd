@@ -3,29 +3,27 @@ package com.backend.senior_backend.service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.backend.senior_backend.repositories.ExpenseRepository;
 import com.backend.senior_backend.repositories.ParticipantsRepository;
 import com.backend.senior_backend.models.Users;
 import com.backend.senior_backend.repositories.UsersRepository;
 import com.backend.senior_backend.dto.ExpensesDetails;
-import com.backend.senior_backend.dto.ExpensesResponse;
 import com.backend.senior_backend.dto.ExpensesSummaryDTO;
 import com.backend.senior_backend.models.Categories;
 import com.backend.senior_backend.models.CategoriesId;
 import com.backend.senior_backend.models.Expenses;
-import com.backend.senior_backend.models.Groups;
 import com.backend.senior_backend.repositories.CategoriesRepository;
+import java.time.YearMonth;
+import java.util.*;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+
+
 
 @Service
 public class ExpensesService {
@@ -142,51 +140,108 @@ public class ExpensesService {
         return false;
     }
 
-    public Map<String, BigDecimal> getUserExpenses(String phone, String filter) {
+    public Map<String, BigDecimal> getUserExpenses(String phone, String filter, String startDateStr) {
 
         List<Expenses> expenses = expensesRepository.findAllByUser_Phone(phone);
 
         TimeGroup groupBy = parseTimeGroup(filter);
-        return getUserExpensesGroupedBy(expenses, groupBy);
+        return getUserExpensesGroupedBy(expenses, groupBy,startDateStr);
 
 
     }
 
+public Map<String, BigDecimal> getUserExpensesGroupedBy(List<Expenses> expenses, TimeGroup groupBy, String startDateStr) {
+    if (expenses == null || expenses.isEmpty()) {
+        System.out.println("⚠️ No expenses provided.");
+        return Map.of();
+    }
 
-    public Map<String, BigDecimal> getUserExpensesGroupedBy(List<Expenses> expenses, TimeGroup groupBy) {
-        if (expenses == null || expenses.isEmpty()) {
-            System.out.println("⚠️ No expenses provided.");
-            return Map.of();
+    // Use provided start date or current date if null/invalid
+    LocalDate startDate = LocalDate.now();
+    if (startDateStr != null && !startDateStr.isEmpty()) {
+        try {
+            startDate = LocalDate.parse(startDateStr, DateTimeFormatter.ISO_LOCAL_DATE);
+        } catch (DateTimeParseException e) {
+            System.out.println("⚠️ Invalid date format: " + startDateStr + ". Using current date instead.");
         }
-    
-        return expenses.stream()
-            .filter(e -> e != null && e.getDate() != null)
-            .collect(Collectors.groupingBy(
-                e -> {
-                    Date date = e.getDate();
-                    LocalDate localDate;
-    
-                    if (date instanceof java.sql.Date sqlDate) {
-                        localDate = sqlDate.toLocalDate();
-                    } else {
-                        localDate = date.toInstant()
-                                        .atZone(ZoneId.systemDefault())
-                                        .toLocalDate();
-                    }
-    
-                    return switch (groupBy) {
-                        case DAY -> localDate.toString();
-                        case MONTH -> localDate.getYear() + "-" + String.format("%02d", localDate.getMonthValue());
-                        case YEAR -> String.valueOf(localDate.getYear());
-                    };
-                },
-                Collectors.mapping(
-                    Expenses::getAmount,
-                    Collectors.reducing(BigDecimal.ZERO, BigDecimal::add)
-                )
-            ));
     }
     
+    // Create a map to hold the expenses grouped by the requested time range (day, month, or year)
+    Map<String, BigDecimal> resultMap = new LinkedHashMap<>(); // Using LinkedHashMap to maintain insertion order
+
+    // Generate the keys for the range: specified date and previous 5 days/months/years
+    List<String> dateKeys = new ArrayList<>();
+    
+    switch (groupBy) {
+        case DAY:
+            for (int i = 5; i >= 0; i--) { // Changed order to have most recent date last
+                dateKeys.add(startDate.minusDays(i).toString());
+            }
+            break;
+        case MONTH:
+            for (int i = 5; i >= 0; i--) { // Changed order to have most recent month last
+                YearMonth ym = YearMonth.from(startDate.minusMonths(i));
+                dateKeys.add(ym.getYear() + "-" + String.format("%02d", ym.getMonthValue()));
+            }
+            break;
+        case YEAR:
+            for (int i = 5; i >= 0; i--) { // Changed order to have most recent year last
+                dateKeys.add(String.valueOf(startDate.minusYears(i).getYear()));
+            }
+            break;
+    }
+
+    // Initialize all date keys with 0
+    for (String key : dateKeys) {
+        resultMap.put(key, BigDecimal.ZERO);
+    }
+
+    // Group expenses by the appropriate date format
+    Map<String, BigDecimal> expensesByDate = expenses.stream()
+        .filter(e -> e != null && e.getDate() != null && e.getAmount() != null)
+        .collect(Collectors.groupingBy(
+            e -> {
+                LocalDate localDate = convertToLocalDate(e.getDate());
+                
+                return switch (groupBy) {
+                    case DAY -> localDate.toString();
+                    case MONTH -> localDate.getYear() + "-" + String.format("%02d", localDate.getMonthValue());
+                    case YEAR -> String.valueOf(localDate.getYear());
+                };
+            },
+            Collectors.mapping(
+                Expenses::getAmount,
+                Collectors.reducing(BigDecimal.ZERO, BigDecimal::add)
+            )
+        ));
+    
+    // Update the result map with the actual expense values
+    for (Map.Entry<String, BigDecimal> entry : expensesByDate.entrySet()) {
+        if (resultMap.containsKey(entry.getKey())) {
+            resultMap.put(entry.getKey(), entry.getValue());
+        }
+    }
+
+    return resultMap;
+}
+
+// Helper method to convert Date to LocalDate
+private LocalDate convertToLocalDate(Date date) {
+    if (date instanceof java.sql.Date) {
+        return ((java.sql.Date) date).toLocalDate();
+    } else {
+        return date.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+    }
+}
+
+/**
+ * Overloaded method that uses the current date as the start date
+ */
+public Map<String, BigDecimal> getUserExpensesGroupedBy(List<Expenses> expenses, TimeGroup groupBy) {
+    return getUserExpensesGroupedBy(expenses, groupBy, null);
+}
     
 
     public TimeGroup parseTimeGroup(String input) {

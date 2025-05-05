@@ -100,11 +100,11 @@ public class ExpenseController {
     }
 
     @GetMapping("/{filter}")
-    public Map<String,BigDecimal> getExpensesByPeriod(@PathVariable String filter) {
+    public Map<String,BigDecimal> getExpensesByPeriod(@PathVariable String filter,@RequestParam String date) {
 
         String phone = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        return expenseService.getUserExpenses(phone,filter);
+        return expenseService.getUserExpenses(phone,filter,date);
 
 
     }
