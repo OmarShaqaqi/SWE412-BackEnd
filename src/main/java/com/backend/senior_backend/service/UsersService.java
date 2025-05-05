@@ -199,9 +199,10 @@ public class UsersService {
         return false;
     }
     @Transactional
-    public void uploadProfilePicture(String phone, String image_encode) {
+    public void uploadProfilePicture(String phone, profilePictureDTO image_encode) {
         Users user = usersRepository.findById(phone).get();
-        user.setImage(image_encode);
+        String image = image_encode.getImage();
+        user.setImage(image);
         usersRepository.save(user);
     }
     @Transactional
