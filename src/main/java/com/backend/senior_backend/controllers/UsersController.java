@@ -11,6 +11,9 @@ import jakarta.validation.Valid;
 import com.backend.senior_backend.dto.LoginRequestDTO;
 import com.backend.senior_backend.dto.UserBudegtDTO;
 import com.backend.senior_backend.models.Users;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 @RestController
@@ -92,4 +95,11 @@ public class UsersController {
 
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/uploadProfilePicture")
+    public String postMethodName(@RequestBody String image_encode) {        
+        System.out.println(image_encode);
+        return "correct";
+    }
+    
 }
