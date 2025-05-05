@@ -197,6 +197,12 @@ public class UsersService {
         }
         return false;
     }
+
+    public void uploadProfilePicture(String phone, String image_encode) {
+        Users user = usersRepository.findById(phone).get();
+        user.setImage(image_encode);
+        usersRepository.save(user);
+    }
 } 
 
 

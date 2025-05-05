@@ -97,9 +97,10 @@ public class UsersController {
     }
 
     @PostMapping("/uploadProfilePicture")
-    public String postMethodName(@RequestBody String image_encode) {        
-        System.out.println(image_encode);
-        return "correct";
+    public ResponseEntity<String> postMethodName(@RequestBody String image_encode) {        
+        String phone = SecurityContextHolder.getContext().getAuthentication().getName();
+        usersService.uploadProfilePicture(phone, image_encode);
+        return  ResponseEntity.ok("✅ Profile picture uploaded successfully!");
     }
     
 }
