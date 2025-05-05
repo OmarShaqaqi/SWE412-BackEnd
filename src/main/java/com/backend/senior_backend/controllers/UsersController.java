@@ -10,6 +10,7 @@ import com.backend.senior_backend.service.UsersService;
 import jakarta.validation.Valid;
 import com.backend.senior_backend.dto.LoginRequestDTO;
 import com.backend.senior_backend.dto.UserBudegtDTO;
+import com.backend.senior_backend.dto.profilePictureDTO;
 import com.backend.senior_backend.models.Users;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -97,10 +98,17 @@ public class UsersController {
     }
 
     @PostMapping("/uploadProfilePicture")
-    public ResponseEntity<String> postMethodName(@RequestBody String image_encode) {        
+    public ResponseEntity<String> uploadProfilePicture(@RequestBody String image_encode) {        
         String phone = SecurityContextHolder.getContext().getAuthentication().getName();
         usersService.uploadProfilePicture(phone, image_encode);
         return  ResponseEntity.ok("✅ Profile picture uploaded successfully!");
+    }
+    @GetMapping("/getProfilePicture")
+    public ResponseEntity<profilePictureDTO> getProfilePicture() {        
+        String phone = SecurityContextHolder.getContext().getAuthentication().getName();
+        profilePictureDTO image = usersService.getProfilePicture(phone);
+
+        return ResponseEntity.ok(image);
     }
     
 }

@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.backend.senior_backend.models.Groups;
 import com.backend.senior_backend.models.Users;
 import com.backend.senior_backend.repositories.UsersRepository;
+import com.backend.senior_backend.dto.profilePictureDTO;
 import lombok.RequiredArgsConstructor;
 import java.util.HashMap;
 import java.util.List;
@@ -202,6 +203,12 @@ public class UsersService {
         Users user = usersRepository.findById(phone).get();
         user.setImage(image_encode);
         usersRepository.save(user);
+    }
+    @Transactional
+    public profilePictureDTO getProfilePicture(String phone) {
+        Users user = usersRepository.findById(phone).get();
+        profilePictureDTO image = new profilePictureDTO(user.getImage());
+        return image;
     }
 } 
 

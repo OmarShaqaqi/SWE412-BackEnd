@@ -38,8 +38,8 @@ public class Users implements UserDetails {
 
     @Column(length = 30, nullable = false)
     private String lname;
-    
-    @Column(nullable = true)
+
+    @Column(nullable = true, columnDefinition = "TEXT")
     private String image;
 
 
