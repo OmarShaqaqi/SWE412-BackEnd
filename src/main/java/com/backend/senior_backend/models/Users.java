@@ -38,6 +38,7 @@ public class Users implements UserDetails {
 
     @Column(length = 30, nullable = false)
     private String lname;
+    
     @Column(nullable = true)
     private String image;
 

@@ -4,7 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
-
+import org.springframework.transaction.annotation.Transactional;
 import com.backend.senior_backend.models.Groups;
 import com.backend.senior_backend.models.Users;
 import com.backend.senior_backend.repositories.UsersRepository;
@@ -197,7 +197,7 @@ public class UsersService {
         }
         return false;
     }
-
+    @Transactional
     public void uploadProfilePicture(String phone, String image_encode) {
         Users user = usersRepository.findById(phone).get();
         user.setImage(image_encode);
