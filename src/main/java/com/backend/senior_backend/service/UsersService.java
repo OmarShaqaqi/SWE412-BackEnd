@@ -4,10 +4,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
-
+import org.springframework.transaction.annotation.Transactional;
 import com.backend.senior_backend.models.Groups;
 import com.backend.senior_backend.models.Users;
 import com.backend.senior_backend.repositories.UsersRepository;
+import com.backend.senior_backend.dto.profilePictureDTO;
 import lombok.RequiredArgsConstructor;
 import java.util.HashMap;
 import java.util.List;
@@ -66,6 +67,7 @@ public class UsersService {
         Groups group = new Groups();
         group.setBudget(budget.intValue());
         group.setName("personal");
+        group.setIconName("Wallet");
 
         groupsService.addGroup(group, user.getPhone(), bindingResult);
 
@@ -213,5 +215,20 @@ public class UsersService {
             return true;
         }
         return false;
+    }
+
+    @Transactional
+    public void uploadProfilePicture(String phone, profilePictureDTO image_encode) {
+        Users user = usersRepository.findById(phone).get();
+        String image = image_encode.getImage();
+        user.setImage(image);
+        usersRepository.save(user);
+    }
+
+    @Transactional
+    public profilePictureDTO getProfilePicture(String phone) {
+        Users user = usersRepository.findById(phone).get();
+        profilePictureDTO image = new profilePictureDTO(user.getImage());
+        return image;
     }
 }

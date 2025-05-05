@@ -11,13 +11,16 @@ public class CategoryResponseDTO {
 
     private String categoryName;
 
+    private String iconName;
+
     // Default constructor
     public CategoryResponseDTO() {}
 
     // Constructor with parameters
-    public CategoryResponseDTO(Long groupId, String categoryName) {
+    public CategoryResponseDTO(Long groupId, String categoryName, String iconName) {
         this.groupId = groupId;
         this.categoryName = categoryName;
+        this.iconName = iconName;
     }
 
    

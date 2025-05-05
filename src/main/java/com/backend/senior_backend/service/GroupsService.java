@@ -8,11 +8,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
+import com.backend.senior_backend.dto.GroupNameWithBudget;
 import com.backend.senior_backend.dto.GroupWithRoleDTO;
 import com.backend.senior_backend.dto.budgetAndExpensesDTO;
+import com.backend.senior_backend.models.Categories;
+import com.backend.senior_backend.models.Expenses;
 import com.backend.senior_backend.models.Groups;
+import com.backend.senior_backend.models.Participants;
+import com.backend.senior_backend.repositories.CategoriesRepository;
+import com.backend.senior_backend.repositories.ExpenseRepository;
 import com.backend.senior_backend.repositories.GroupsRepository;
 import com.backend.senior_backend.repositories.ParticipantsRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class GroupsService {
@@ -28,6 +36,12 @@ public class GroupsService {
 
     @Autowired
     private ExpensesService expensesService;
+
+    @Autowired
+    private ExpenseRepository expensesRepository;
+
+    @Autowired
+    private CategoriesRepository categoriesRepository;
     
     public Groups addGroup(Groups group, String phone, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -87,6 +101,53 @@ public class GroupsService {
         budgetAndExpensesDTO budgetAndExpenses = new budgetAndExpensesDTO(budget, expenses);
         return budgetAndExpenses;
     }
+
+
+    public String deleteGroup(Long groupId) {
+        // Ensure the group exists
+        Groups group = groupsRepository.findById(groupId).orElse(null);
+        if (group == null) {
+            return "Group not found!";
+        }
+
+        // Optional: Delete associated expenses
+        List<Expenses> expenses = expensesRepository.findAllByCategoryIdGroupId(groupId);
+        if (!expenses.isEmpty()) {
+            expensesRepository.deleteAll(expenses);
+        }
+        List<Participants> participants = participantsRepository.findAllByGroupId(groupId.intValue());
+        if (!participants.isEmpty()){
+            participantsRepository.deleteAll(participants);
+        }
+        List<Categories> categories = categoriesRepository.findAllByGroupId(groupId);
+        if(!categories.isEmpty()){
+            categoriesRepository.deleteAll(categories);
+        }
+        groupsRepository.delete(group);
+
+        return "Group deleted successfully";
+    }
+
+    
+
+    public String updateGroup(Long groupId, GroupNameWithBudget updatedGroup) {
+        Groups group = groupsRepository.findById(groupId).orElse(null);
+        if (group == null) {
+            return "Group not found"; // Handle the case when the group doesn't exist
+        }
+    
+        // Only update if the value is not null
+        if (updatedGroup.getGroupName() != null) {
+            group.setName(updatedGroup.getGroupName());
+        }
+        if (updatedGroup.getBudget() != null) {
+            group.setBudget(updatedGroup.getBudget());
+        }
+    
+        groupsRepository.save(group);
+        return "Group updated successfully";
+    }
+    
 
 
     

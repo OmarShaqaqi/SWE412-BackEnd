@@ -81,7 +81,7 @@ public class ExpenseController {
         return ResponseEntity.ok(expenses);
     }
 
-    @DeleteMapping("/delete")
+    @GetMapping("/delete")
     public ResponseEntity<String> deleteExpense(@RequestParam Long expenseId) {
         String response = expenseService.deleteExpense(expenseId);
         return ResponseEntity.ok(response);
