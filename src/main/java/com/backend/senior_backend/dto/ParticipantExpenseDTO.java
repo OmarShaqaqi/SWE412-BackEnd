@@ -11,6 +11,7 @@ public class ParticipantExpenseDTO {
     private double totalExpense;
     private boolean isLeader;
     private String image;
+    private String username;
 
     
 }

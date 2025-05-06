@@ -90,7 +90,7 @@ public class ParticipantsService {
         List<ParticipantExpenseDTO> participantsWithExpenses = participants.stream()
         .map(participant -> new ParticipantExpenseDTO(participant.getUser().getPhone(),
         expensesService.getTotalExpenses(participant.getGroup().getId(),
-        participant.getUser().getPhone()), participant.isLeader(), participant.getUser().getImage())).toList();
+        participant.getUser().getPhone()), participant.isLeader(), participant.getUser().getImage(), participant.getUser().getUsername())).toList();
 
         return participantsWithExpenses;
     }
