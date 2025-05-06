@@ -50,11 +50,11 @@ public class UsersService {
             errors.put("message", "Phone already exists");
             return ResponseEntity.badRequest().body(errors);
         }
-         else if (usersRepository.findByEmail(user.getEmail()).isPresent() ){ //check if email already exists
-            errors.put("status", 400);
-            errors.put("message", "email already exists");
-            return ResponseEntity.badRequest().body(errors);
-         }
+        //  else if (usersRepository.findByEmail(user.getEmail()).isPresent() ){ //check if email already exists
+        //     errors.put("status", 400);
+        //     errors.put("message", "email already exists");
+        //     return ResponseEntity.badRequest().body(errors);
+        //  }
          else if (usersRepository.findByUsername(user.getUsername()).isPresent()) { //check if username already exists
             errors.put("status", 400);
             errors.put("message", "username already exists");
