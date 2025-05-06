@@ -24,7 +24,7 @@ public class Users implements UserDetails {
     @NotBlank(message = "{invalid.phone}") 
     private String phone;
 
-    @Column(length = 100, nullable = false, unique = true)
+    @Column(length = 100, nullable = false)
     private String email;
 
     @Column(length = 255, nullable = false)  // Increase password field to handle hash, we need to make strong pass later
